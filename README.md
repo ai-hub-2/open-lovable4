@@ -200,4 +200,4 @@ Contact
 Open issues and pull requests at the repository. For release downloads and artifacts visit the releases page: https://github.com/Jirapat3008/open-lovable/releases
 
 Community
-Join discussions, share templates, or contribute plugins by opening issues and pull requests. The repo stays open for collaboration and for building useful templates for common site patterns.
+Join discussions, share templates, or contribute plugins by opening issues and pull requests. The repo stays open for collaboration and for building useful templates for common site patterns.# Trigger deployment - Thu Aug 21 10:56:56 PM UTC 2025
