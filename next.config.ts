@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Removed output: 'export' as it's incompatible with API routes
+  output: 'export',
+  trailingSlash: true,
   images: {
     unoptimized: true
   }
