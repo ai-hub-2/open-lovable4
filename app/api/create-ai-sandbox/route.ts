@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 
 import { NextResponse } from 'next/server';
 import { Sandbox } from '@e2b/code-interpreter';

@@ -25,11 +25,15 @@ fi
 echo "📦 تثبيت جميع التبعيات..."
 npm install
 
-# 4️⃣ بناء المشروع
+# 4️⃣ إصلاح static export compatibility
+echo "🔧 إصلاح static export compatibility..."
+node fix-static-export.js
+
+# 5️⃣ بناء المشروع
 echo "🏗️ بناء المشروع..."
 npm run build
 
-# 5️⃣ التحقق من مجلد البناء
+# 6️⃣ التحقق من مجلد البناء
 echo "🔍 التحقق من مجلد البناء..."
 if [ ! -d "out" ]; then
     echo "❌ خطأ: مجلد 'out' غير موجود!"
@@ -39,15 +43,15 @@ fi
 
 echo "✅ مجلد البناء موجود: out/"
 
-# 6️⃣ تسجيل الدخول إلى Cloudflare
+# 7️⃣ تسجيل الدخول إلى Cloudflare
 echo "🌐 تسجيل الدخول إلى Cloudflare..."
 wrangler login
 
-# 7️⃣ نشر المشروع على Cloudflare Pages
+# 8️⃣ نشر المشروع على Cloudflare Pages
 echo "🚀 نشر المشروع على Cloudflare Pages..."
 wrangler pages publish out --project-name=open-lovable4
 
-# 8️⃣ التحقق من آخر نشر
+# 9️⃣ التحقق من آخر نشر
 echo "✅ التحقق من آخر نشر..."
 wrangler pages deployments list --project-name=open-lovable4
 

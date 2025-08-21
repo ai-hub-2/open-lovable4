@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 
 import { NextRequest, NextResponse } from 'next/server';
 import type { SandboxState } from '@/types/sandbox';
