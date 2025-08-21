@@ -1,0 +1,9 @@
+name = "open-lovable4"
+compatibility_date = "2025-08-21"
+
+[build]
+# تثبيت الحزم مع السماح بتجاوز تجميد lockfile
+command = "pnpm install --no-frozen-lockfile && pnpm build"
+
+# مجلد الخرج (حسب مشروع Next.js يكون .next)
+pages_build_output_dir = ".next"
