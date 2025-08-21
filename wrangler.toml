@@ -13,3 +13,4 @@ workers_dev = true
 # إعدادات Pages
 [pages]
 name = "open-lovable4"
+pages_build_output_dir = ".next"
