@@ -14,6 +14,9 @@
     "test:all": "npm run test:integration && npm run test:api && npm run test:code",
     "check": "node check-unescaped.js",
     "clean": "rm -rf .next out .vercel",
+    "clean:cache": "node clean-cache.js",
+    "build:clean": "npm run clean:cache && npm run build",
+    "build:optimized": "npm run clean:cache && npm run build",
     "build:clean": "npm run clean && npm run build"
   },
   "dependencies": {
