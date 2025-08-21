@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "node fix-cloudflare-runtime.js && next dev --turbopack",
+    "build": "node fix-cloudflare-runtime.js && next build",
     "start": "next start",
     "lint": "next lint",
     "test:integration": "node tests/e2b-integration.test.js",
@@ -14,6 +14,7 @@
     "test:all": "npm run test:integration && npm run test:api && npm run test:code",
     "deploy:preview": "npm run build && wrangler pages deploy --project-name=open-lovable4",
     "deploy:production": "npm run build && wrangler pages deploy --project-name=open-lovable4 --branch=main",
+    "fix:runtime": "node fix-cloudflare-runtime.js",
     "clean": "rm -rf .next out .vercel",
     "build:clean": "npm run clean && npm run build"
   },
@@ -35,6 +36,7 @@
     "dotenv": "^17.2.1",
     "e2b": "^1.13.2",
     "framer-motion": "^12.23.12",
+    "glob": "^11.0.3",
     "groq-sdk": "^0.29.0",
     "lucide-react": "^0.532.0",
     "next": "15.4.3",

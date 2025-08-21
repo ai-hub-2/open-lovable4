@@ -1,3 +1,6 @@
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from 'next/server';
 
 // Stub endpoint to prevent 404 errors
