@@ -1,32 +1,32 @@
-export const dynamic = "force-static";
+export const dynamic = &quot;force-static&quot;;
 
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from &apos;next/server&apos;;
 
 export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json();
     
     if (!url) {
-      return NextResponse.json({ error: 'URL is required' }, { status: 400 });
+      return NextResponse.json({ error: &apos;URL is required&apos; }, { status: 400 });
     }
 
     // Use Firecrawl API to capture screenshot
-    const firecrawlResponse = await fetch('https://api.firecrawl.dev/v1/scrape', {
-      method: 'POST',
+    const firecrawlResponse = await fetch(&apos;https://api.firecrawl.dev/v1/scrape&apos;, {
+      method: &apos;POST&apos;,
       headers: {
-        'Authorization': `Bearer ${process.env.FIRECRAWL_API_KEY}`,
-        'Content-Type': 'application/json'
+        &apos;Authorization&apos;: `Bearer ${process.env.FIRECRAWL_API_KEY}`,
+        &apos;Content-Type&apos;: &apos;application/json&apos;
       },
       body: JSON.stringify({
         url,
-        formats: ['screenshot'], // Regular viewport screenshot, not full page
+        formats: [&apos;screenshot&apos;], // Regular viewport screenshot, not full page
         waitFor: 3000, // Wait for page to fully load
         timeout: 30000,
         blockAds: true,
         actions: [
           {
-            type: 'wait',
+            type: &apos;wait&apos;,
             milliseconds: 2000 // Additional wait for dynamic content
           }
         ]
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     const data = await firecrawlResponse.json();
     
     if (!data.success || !data.data?.screenshot) {
-      throw new Error('Failed to capture screenshot');
+      throw new Error(&apos;Failed to capture screenshot&apos;);
     }
 
     return NextResponse.json({
@@ -51,9 +51,9 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Screenshot capture error:', error);
+    console.error(&apos;Screenshot capture error:&apos;, error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to capture screenshot' 
+      error: error.message || &apos;Failed to capture screenshot&apos; 
     }, { status: 500 });
   }
 }

@@ -28,22 +28,22 @@ export const appConfig = {
   // AI Model Configuration
   ai: {
     // Default AI model
-    defaultModel: 'moonshotai/kimi-k2-instruct',
+    defaultModel: &apos;moonshotai/kimi-k2-instruct&apos;,
     
     // Available models
     availableModels: [
-      'openai/gpt-5',
-      'moonshotai/kimi-k2-instruct',
-      'anthropic/claude-sonnet-4-20250514',
-      'google/gemini-2.5-pro'
+      &apos;openai/gpt-5&apos;,
+      &apos;moonshotai/kimi-k2-instruct&apos;,
+      &apos;anthropic/claude-sonnet-4-20250514&apos;,
+      &apos;google/gemini-2.5-pro&apos;
     ],
     
     // Model display names
     modelDisplayNames: {
-      'openai/gpt-5': 'GPT-5',
-      'moonshotai/kimi-k2-instruct': 'Kimi K2 Instruct',
-      'anthropic/claude-sonnet-4-20250514': 'Sonnet 4',
-      'google/gemini-2.5-pro': 'Gemini 2.5 Pro'
+      &apos;openai/gpt-5&apos;: &apos;GPT-5&apos;,
+      &apos;moonshotai/kimi-k2-instruct&apos;: &apos;Kimi K2 Instruct&apos;,
+      &apos;anthropic/claude-sonnet-4-20250514&apos;: &apos;Sonnet 4&apos;,
+      &apos;google/gemini-2.5-pro&apos;: &apos;Gemini 2.5 Pro&apos;
     },
     
     // Temperature settings for non-reasoning models
@@ -118,13 +118,13 @@ export const appConfig = {
   files: {
     // Excluded file patterns (files to ignore)
     excludePatterns: [
-      'node_modules/**',
-      '.git/**',
-      '.next/**',
-      'dist/**',
-      'build/**',
-      '*.log',
-      '.DS_Store'
+      &apos;node_modules/**&apos;,
+      &apos;.git/**&apos;,
+      &apos;.next/**&apos;,
+      &apos;dist/**&apos;,
+      &apos;build/**&apos;,
+      &apos;*.log&apos;,
+      &apos;.DS_Store&apos;
     ],
     
     // Maximum file size to read (bytes)
@@ -132,12 +132,12 @@ export const appConfig = {
     
     // File extensions to treat as text
     textFileExtensions: [
-      '.js', '.jsx', '.ts', '.tsx',
-      '.css', '.scss', '.sass',
-      '.html', '.xml', '.svg',
-      '.json', '.yml', '.yaml',
-      '.md', '.txt', '.env',
-      '.gitignore', '.dockerignore'
+      &apos;.js&apos;, &apos;.jsx&apos;, &apos;.ts&apos;, &apos;.tsx&apos;,
+      &apos;.css&apos;, &apos;.scss&apos;, &apos;.sass&apos;,
+      &apos;.html&apos;, &apos;.xml&apos;, &apos;.svg&apos;,
+      &apos;.json&apos;, &apos;.yml&apos;, &apos;.yaml&apos;,
+      &apos;.md&apos;, &apos;.txt&apos;, &apos;.env&apos;,
+      &apos;.gitignore&apos;, &apos;.dockerignore&apos;
     ],
   },
   
@@ -153,13 +153,13 @@ export const appConfig = {
 };
 
 // Type-safe config getter
-export function getConfig<K extends keyof typeof appConfig>(key: K): typeof appConfig[K] {
+export function getConfig&amp;lt;K extends keyof typeof appConfig&amp;gt;(key: K): typeof appConfig[K] {
   return appConfig[key];
 }
 
 // Helper to get nested config values
 export function getConfigValue(path: string): any {
-  return path.split('.').reduce((obj, key) => obj?.[key], appConfig as any);
+  return path.split(&apos;.&apos;).reduce((obj, key) =&amp;gt; obj?.[key], appConfig as any);
 }
 
 export default appConfig;

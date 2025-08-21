@@ -1,6 +1,6 @@
-import { FileManifest, EditIntent, EditType } from '@/types/file-manifest';
-import { analyzeEditIntent } from '@/lib/edit-intent-analyzer';
-import { getEditExamplesPrompt, getComponentPatternPrompt } from '@/lib/edit-examples';
+import { FileManifest, EditIntent, EditType } from &apos;@/types/file-manifest&apos;;
+import { analyzeEditIntent } from &apos;@/lib/edit-intent-analyzer&apos;;
+import { getEditExamplesPrompt, getComponentPatternPrompt } from &apos;@/lib/edit-examples&apos;;
 
 export interface FileContext {
   primaryFiles: string[]; // Files to edit
@@ -22,36 +22,36 @@ export function selectFilesForEdit(
   // Get the files based on intent - only edit target files, but provide all others as context
   const primaryFiles = editIntent.targetFiles;
   const allFiles = Object.keys(manifest.files);
-  let contextFiles = allFiles.filter(file => !primaryFiles.includes(file));
+  let contextFiles = allFiles.filter(file =&amp;gt; !primaryFiles.includes(file));
   
-  // ALWAYS include key files in context if they exist and aren't already primary files
+  // ALWAYS include key files in context if they exist and aren&apos;t already primary files
   const keyFiles: string[] = [];
   
   // App.jsx is most important - shows component structure
-  const appFile = allFiles.find(f => f.endsWith('App.jsx') || f.endsWith('App.tsx'));
-  if (appFile && !primaryFiles.includes(appFile)) {
+  const appFile = allFiles.find(f =&amp;gt; f.endsWith(&apos;App.jsx&apos;) || f.endsWith(&apos;App.tsx&apos;));
+  if (appFile &amp;&amp; !primaryFiles.includes(appFile)) {
     keyFiles.push(appFile);
   }
   
   // Include design system files for style context
-  const tailwindConfig = allFiles.find(f => f.endsWith('tailwind.config.js') || f.endsWith('tailwind.config.ts'));
-  if (tailwindConfig && !primaryFiles.includes(tailwindConfig)) {
+  const tailwindConfig = allFiles.find(f =&amp;gt; f.endsWith(&apos;tailwind.config.js&apos;) || f.endsWith(&apos;tailwind.config.ts&apos;));
+  if (tailwindConfig &amp;&amp; !primaryFiles.includes(tailwindConfig)) {
     keyFiles.push(tailwindConfig);
   }
   
-  const indexCss = allFiles.find(f => f.endsWith('index.css') || f.endsWith('globals.css'));
-  if (indexCss && !primaryFiles.includes(indexCss)) {
+  const indexCss = allFiles.find(f =&amp;gt; f.endsWith(&apos;index.css&apos;) || f.endsWith(&apos;globals.css&apos;));
+  if (indexCss &amp;&amp; !primaryFiles.includes(indexCss)) {
     keyFiles.push(indexCss);
   }
   
   // Include package.json to understand dependencies
-  const packageJson = allFiles.find(f => f.endsWith('package.json'));
-  if (packageJson && !primaryFiles.includes(packageJson)) {
+  const packageJson = allFiles.find(f =&amp;gt; f.endsWith(&apos;package.json&apos;));
+  if (packageJson &amp;&amp; !primaryFiles.includes(packageJson)) {
     keyFiles.push(packageJson);
   }
   
   // Put key files at the beginning of context for visibility
-  contextFiles = [...keyFiles, ...contextFiles.filter(f => !keyFiles.includes(f))];
+  contextFiles = [...keyFiles, ...contextFiles.filter(f =&amp;gt; !keyFiles.includes(f))];
   
   // Build enhanced system prompt
   const systemPrompt = buildSystemPrompt(
@@ -93,31 +93,31 @@ Type: ${editIntent.type}
 Description: ${editIntent.description}
 Confidence: ${(editIntent.confidence * 100).toFixed(0)}%
 
-User Request: "${userPrompt}"`);
+User Request: &quot;${userPrompt}&quot;`);
   
   // Add file structure overview
   sections.push(buildFileStructureSection(manifest));
   
   // Add component patterns
-  const fileList = Object.keys(manifest.files).map(f => f.replace('/home/user/app/', '')).join('\n');
+  const fileList = Object.keys(manifest.files).map(f =&amp;gt; f.replace(&apos;/home/user/app/&apos;, &apos;&apos;)).join(&apos;\n&apos;);
   sections.push(getComponentPatternPrompt(fileList));
   
   // Add primary files section
-  if (primaryFiles.length > 0) {
+  if (primaryFiles.length &amp;gt; 0) {
     sections.push(`## Files to Edit
-${primaryFiles.map(f => {
+${primaryFiles.map(f =&amp;gt; {
   const fileInfo = manifest.files[f];
-  return `- ${f}${fileInfo?.componentInfo ? ` (${fileInfo.componentInfo.name} component)` : ''}`;
-}).join('\n')}`);
+  return `- ${f}${fileInfo?.componentInfo ? ` (${fileInfo.componentInfo.name} component)` : &apos;&apos;}`;
+}).join(&apos;\n&apos;)}`);
   }
   
   // Add context files section
-  if (contextFiles.length > 0) {
+  if (contextFiles.length &amp;gt; 0) {
     sections.push(`## Context Files (for reference only)
-${contextFiles.map(f => {
+${contextFiles.map(f =&amp;gt; {
   const fileInfo = manifest.files[f];
-  return `- ${f}${fileInfo?.componentInfo ? ` (${fileInfo.componentInfo.name} component)` : ''}`;
-}).join('\n')}`);
+  return `- ${f}${fileInfo?.componentInfo ? ` (${fileInfo.componentInfo.name} component)` : &apos;&apos;}`;
+}).join(&apos;\n&apos;)}`);
   }
   
   // Add specific instructions based on edit type
@@ -129,7 +129,7 @@ ${contextFiles.map(f => {
     sections.push(buildComponentRelationships(primaryFiles, manifest));
   }
   
-  return sections.join('\n\n');
+  return sections.join(&apos;\n\n&apos;);
 }
 
 /**
@@ -137,15 +137,15 @@ ${contextFiles.map(f => {
  */
 function buildFileStructureSection(manifest: FileManifest): string {
   const allFiles = Object.entries(manifest.files)
-    .map(([path]) => path.replace('/home/user/app/', ''))
-    .filter(path => !path.includes('node_modules'))
+    .map(([path]) =&amp;gt; path.replace(&apos;/home/user/app/&apos;, &apos;&apos;))
+    .filter(path =&amp;gt; !path.includes(&apos;node_modules&apos;))
     .sort();
   
   const componentFiles = Object.entries(manifest.files)
-    .filter(([, info]) => info.type === 'component' || info.type === 'page')
-    .map(([path, info]) => ({
-      path: path.replace('/home/user/app/', ''),
-      name: info.componentInfo?.name || path.split('/').pop(),
+    .filter(([, info]) =&amp;gt; info.type === &apos;component&apos; || info.type === &apos;page&apos;)
+    .map(([path, info]) =&amp;gt; ({
+      path: path.replace(&apos;/home/user/app/&apos;, &apos;&apos;),
+      name: info.componentInfo?.name || path.split(&apos;/&apos;).pop(),
       type: info.type,
     }));
   
@@ -153,40 +153,40 @@ function buildFileStructureSection(manifest: FileManifest): string {
 
 ### ALL PROJECT FILES (${allFiles.length} files)
 \`\`\`
-${allFiles.join('\n')}
+${allFiles.join(&apos;\n&apos;)}
 \`\`\`
 
 ### Component Files (USE THESE EXACT NAMES)
-${componentFiles.map(f => 
+${componentFiles.map(f =&amp;gt; 
   `- ${f.name} → ${f.path} (${f.type})`
-).join('\n')}
+).join(&apos;\n&apos;)}
 
 ### CRITICAL: Component Relationships
-**ALWAYS CHECK App.jsx FIRST** to understand what components exist and how they're imported!
+**ALWAYS CHECK App.jsx FIRST** to understand what components exist and how they&apos;re imported!
 
 Common component overlaps to watch for:
-- "nav" or "navigation" → Often INSIDE Header.jsx, not a separate file
-- "menu" → Usually part of Header/Nav, not separate
-- "logo" → Typically in Header, not standalone
+- &quot;nav&quot; or &quot;navigation&quot; → Often INSIDE Header.jsx, not a separate file
+- &quot;menu&quot; → Usually part of Header/Nav, not separate
+- &quot;logo&quot; → Typically in Header, not standalone
 
-When user says "nav" or "navigation":
+When user says &quot;nav&quot; or &quot;navigation&quot;:
 1. First check if Header.jsx exists
 2. Look inside Header.jsx for navigation elements
-3. Only create Nav.jsx if navigation doesn't exist anywhere
+3. Only create Nav.jsx if navigation doesn&apos;t exist anywhere
 
 Entry Point: ${manifest.entryPoint}
 
 ### Routes
-${manifest.routes.map(r => 
-  `- ${r.path} → ${r.component.split('/').pop()}`
-).join('\n') || 'No routes detected'}`;
+${manifest.routes.map(r =&amp;gt; 
+  `- ${r.path} → ${r.component.split(&apos;/&apos;).pop()}`
+).join(&apos;\n&apos;) || &apos;No routes detected&apos;}`;
 }
 
 /**
  * Build edit-type specific instructions
  */
 function buildEditInstructions(editType: EditType): string {
-  const instructions: Record<EditType, string> = {
+  const instructions: Record&amp;lt;EditType, string&amp;gt; = {
     [EditType.UPDATE_COMPONENT]: `## SURGICAL EDIT INSTRUCTIONS
 - You MUST preserve 99% of the original code
 - ONLY edit the specific component(s) mentioned
@@ -207,20 +207,20 @@ function buildEditInstructions(editType: EditType): string {
 - Add necessary styles to match existing design
 - Example workflow:
   1. Create NewComponent.jsx
-  2. Import it in the parent: import NewComponent from './NewComponent'
-  3. Use it in the parent's render: <NewComponent />`,
+  2. Import it in the parent: import NewComponent from &apos;./NewComponent&apos;
+  3. Use it in the parent&apos;s render: &amp;lt;NewComponent /&amp;gt;`,
     
     [EditType.FIX_ISSUE]: `## Instructions
 - Identify and fix the specific issue
-- Test the fix doesn't break other functionality
+- Test the fix doesn&apos;t break other functionality
 - Preserve existing behavior except for the bug
 - Add error handling if needed`,
     
     [EditType.UPDATE_STYLE]: `## SURGICAL STYLE EDIT INSTRUCTIONS
 - Change ONLY the specific style/class mentioned
-- If user says "change background to blue", change ONLY the background class
+- If user says &quot;change background to blue&quot;, change ONLY the background class
 - DO NOT touch any other styles, classes, or attributes
-- DO NOT refactor or "improve" the styling
+- DO NOT refactor or &quot;improve&quot; the styling
 - DO NOT change the component structure
 - Preserve ALL other classes and styles exactly as they are
 - Return the COMPLETE file with only the specific style change`,
@@ -254,7 +254,7 @@ function buildComponentRelationships(
   files: string[],
   manifest: FileManifest
 ): string {
-  const relationships: string[] = ['## Component Relationships'];
+  const relationships: string[] = [&apos;## Component Relationships&apos;];
   
   for (const file of files) {
     const fileInfo = manifest.files[file];
@@ -266,21 +266,21 @@ function buildComponentRelationships(
     if (treeNode) {
       relationships.push(`\n### ${componentName}`);
       
-      if (treeNode.imports.length > 0) {
-        relationships.push(`Imports: ${treeNode.imports.join(', ')}`);
+      if (treeNode.imports.length &amp;gt; 0) {
+        relationships.push(`Imports: ${treeNode.imports.join(&apos;, &apos;)}`);
       }
       
-      if (treeNode.importedBy.length > 0) {
-        relationships.push(`Used by: ${treeNode.importedBy.join(', ')}`);
+      if (treeNode.importedBy.length &amp;gt; 0) {
+        relationships.push(`Used by: ${treeNode.importedBy.join(&apos;, &apos;)}`);
       }
       
       if (fileInfo.componentInfo.childComponents?.length) {
-        relationships.push(`Renders: ${fileInfo.componentInfo.childComponents.join(', ')}`);
+        relationships.push(`Renders: ${fileInfo.componentInfo.childComponents.join(&apos;, &apos;)}`);
       }
     }
   }
   
-  return relationships.join('\n');
+  return relationships.join(&apos;\n&apos;);
 }
 
 /**
@@ -289,8 +289,8 @@ function buildComponentRelationships(
 export async function getFileContents(
   files: string[],
   manifest: FileManifest
-): Promise<Record<string, string>> {
-  const contents: Record<string, string> = {};
+): Promise&amp;lt;Record&amp;lt;string, string&amp;gt;&amp;gt; {
+  const contents: Record&amp;lt;string, string&amp;gt; = {};
   
   for (const file of files) {
     const fileInfo = manifest.files[file];
@@ -306,16 +306,16 @@ export async function getFileContents(
  * Format files for AI context
  */
 export function formatFilesForAI(
-  primaryFiles: Record<string, string>,
-  contextFiles: Record<string, string>
+  primaryFiles: Record&amp;lt;string, string&amp;gt;,
+  contextFiles: Record&amp;lt;string, string&amp;gt;
 ): string {
   const sections: string[] = [];
   
   // Add primary files
-  sections.push('## Files to Edit (ONLY OUTPUT THESE FILES)\n');
-  sections.push('🚨 You MUST ONLY generate the files listed below. Do NOT generate any other files! 🚨\n');
-  sections.push('⚠️ CRITICAL: Return the COMPLETE file - NEVER truncate with "..." or skip any lines! ⚠️\n');
-  sections.push('The file MUST include ALL imports, ALL functions, ALL JSX, and ALL closing tags.\n\n');
+  sections.push(&apos;## Files to Edit (ONLY OUTPUT THESE FILES)\n&apos;);
+  sections.push(&apos;🚨 You MUST ONLY generate the files listed below. Do NOT generate any other files! 🚨\n&apos;);
+  sections.push(&apos;⚠️ CRITICAL: Return the COMPLETE file - NEVER truncate with &quot;...&quot; or skip any lines! ⚠️\n&apos;);
+  sections.push(&apos;The file MUST include ALL imports, ALL functions, ALL JSX, and ALL closing tags.\n\n&apos;);
   for (const [path, content] of Object.entries(primaryFiles)) {
     sections.push(`### ${path}
 **IMPORTANT: This is the COMPLETE file. Your output must include EVERY line shown below, modified only where necessary.**
@@ -326,13 +326,13 @@ ${content}
   }
   
   // Add context files if any - but truncate large files
-  if (Object.keys(contextFiles).length > 0) {
-    sections.push('\n## Context Files (Reference Only - Do Not Edit)\n');
+  if (Object.keys(contextFiles).length &amp;gt; 0) {
+    sections.push(&apos;\n## Context Files (Reference Only - Do Not Edit)\n&apos;);
     for (const [path, content] of Object.entries(contextFiles)) {
       // Truncate very large context files to save tokens
       let truncatedContent = content;
-      if (content.length > 2000) {
-        truncatedContent = content.substring(0, 2000) + '\n// ... [truncated for context length]';
+      if (content.length &amp;gt; 2000) {
+        truncatedContent = content.substring(0, 2000) + &apos;\n// ... [truncated for context length]&apos;;
       }
       
       sections.push(`### ${path}
@@ -343,21 +343,21 @@ ${truncatedContent}
     }
   }
   
-  return sections.join('\n');
+  return sections.join(&apos;\n&apos;);
 }
 
 /**
  * Get file extension for syntax highlighting
  */
 function getFileExtension(path: string): string {
-  const ext = path.split('.').pop() || '';
-  const mapping: Record<string, string> = {
-    'js': 'javascript',
-    'jsx': 'javascript',
-    'ts': 'typescript',
-    'tsx': 'typescript',
-    'css': 'css',
-    'json': 'json',
+  const ext = path.split(&apos;.&apos;).pop() || &apos;&apos;;
+  const mapping: Record&amp;lt;string, string&amp;gt; = {
+    &apos;js&apos;: &apos;javascript&apos;,
+    &apos;jsx&apos;: &apos;javascript&apos;,
+    &apos;ts&apos;: &apos;typescript&apos;,
+    &apos;tsx&apos;: &apos;typescript&apos;,
+    &apos;css&apos;: &apos;css&apos;,
+    &apos;json&apos;: &apos;json&apos;,
   };
   return mapping[ext] || ext;
 }

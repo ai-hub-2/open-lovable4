@@ -1,8 +1,8 @@
-export const dynamic = "force-static";
+export const dynamic = &quot;force-static&quot;;
 
 
-import { NextRequest, NextResponse } from 'next/server';
-import { Sandbox } from '@e2b/code-interpreter';
+import { NextRequest, NextResponse } from &apos;next/server&apos;;
+import { Sandbox } from &apos;@e2b/code-interpreter&apos;;
 
 declare global {
   var activeSandbox: any;
@@ -16,19 +16,19 @@ export async function POST(request: NextRequest) {
     if (!packages || !Array.isArray(packages) || packages.length === 0) {
       return NextResponse.json({ 
         success: false, 
-        error: 'Packages array is required' 
+        error: &apos;Packages array is required&apos; 
       }, { status: 400 });
     }
     
     // Validate and deduplicate package names
     const validPackages = [...new Set(packages)]
-      .filter(pkg => pkg && typeof pkg === 'string' && pkg.trim() !== '')
-      .map(pkg => pkg.trim());
+      .filter(pkg =&amp;gt; pkg &amp;&amp; typeof pkg === &apos;string&apos; &amp;&amp; pkg.trim() !== &apos;&apos;)
+      .map(pkg =&amp;gt; pkg.trim());
     
     if (validPackages.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No valid package names provided'
+        error: &apos;No valid package names provided&apos;
       }, { status: 400 });
     }
     
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     // Try to get sandbox - either from global or reconnect
     let sandbox = global.activeSandbox;
     
-    if (!sandbox && sandboxId) {
+    if (!sandbox &amp;&amp; sandboxId) {
       console.log(`[install-packages] Reconnecting to sandbox ${sandboxId}...`);
       try {
         sandbox = await Sandbox.connect(sandboxId, { apiKey: process.env.E2B_API_KEY });
@@ -60,11 +60,11 @@ export async function POST(request: NextRequest) {
     if (!sandbox) {
       return NextResponse.json({ 
         success: false, 
-        error: 'No active sandbox available' 
+        error: &apos;No active sandbox available&apos; 
       }, { status: 400 });
     }
     
-    console.log('[install-packages] Installing packages:', packages);
+    console.log(&apos;[install-packages] Installing packages:&apos;, packages);
     
     // Create a response stream for real-time updates
     const encoder = new TextEncoder();
@@ -72,22 +72,22 @@ export async function POST(request: NextRequest) {
     const writer = stream.writable.getWriter();
     
     // Function to send progress updates
-    const sendProgress = async (data: any) => {
+    const sendProgress = async (data: any) =&amp;gt; {
       const message = `data: ${JSON.stringify(data)}\n\n`;
       await writer.write(encoder.encode(message));
     };
     
     // Start installation in background
-    (async (sandboxInstance) => {
+    (async (sandboxInstance) =&amp;gt; {
       try {
         await sendProgress({ 
-          type: 'start', 
-          message: `Installing ${validPackages.length} package${validPackages.length > 1 ? 's' : ''}...`,
+          type: &apos;start&apos;, 
+          message: `Installing ${validPackages.length} package${validPackages.length &amp;gt; 1 ? &apos;s&apos; : &apos;&apos;}...`,
           packages: validPackages 
         });
         
         // Kill any existing Vite process first
-        await sendProgress({ type: 'status', message: 'Stopping development server...' });
+        await sendProgress({ type: &apos;status&apos;, message: &apos;Stopping development server...&apos; });
         
         await sandboxInstance.runCode(`
 import subprocess
@@ -96,33 +96,33 @@ import signal
 
 # Try to kill any existing Vite process
 try:
-    with open('/tmp/vite-process.pid', 'r') as f:
+    with open(&apos;/tmp/vite-process.pid&apos;, &apos;r&apos;) as f:
         pid = int(f.read().strip())
         os.kill(pid, signal.SIGTERM)
-        print("Stopped existing Vite process")
+        print(&quot;Stopped existing Vite process&quot;)
 except:
-    print("No existing Vite process found")
+    print(&quot;No existing Vite process found&quot;)
         `);
         
         // Check which packages are already installed
         await sendProgress({ 
-          type: 'status', 
-          message: 'Checking installed packages...' 
+          type: &apos;status&apos;, 
+          message: &apos;Checking installed packages...&apos; 
         });
         
         const checkResult = await sandboxInstance.runCode(`
 import os
 import json
 
-os.chdir('/home/user/app')
+os.chdir(&apos;/home/user/app&apos;)
 
 # Read package.json to check installed packages
 try:
-    with open('package.json', 'r') as f:
+    with open(&apos;package.json&apos;, &apos;r&apos;) as f:
         package_json = json.load(f)
     
-    dependencies = package_json.get('dependencies', {})
-    dev_dependencies = package_json.get('devDependencies', {})
+    dependencies = package_json.get(&apos;dependencies&apos;, {})
+    dev_dependencies = package_json.get(&apos;devDependencies&apos;, {})
     all_deps = {**dependencies, **dev_dependencies}
     
     # Check which packages need to be installed
@@ -132,77 +132,77 @@ try:
     
     for pkg in packages_to_check:
         # Handle scoped packages
-        if pkg.startswith('@'):
+        if pkg.startswith(&apos;@&apos;):
             pkg_name = pkg
         else:
             # Extract package name without version
-            pkg_name = pkg.split('@')[0]
+            pkg_name = pkg.split(&apos;@&apos;)[0]
         
         if pkg_name in all_deps:
             already_installed.append(pkg_name)
         else:
             need_install.append(pkg)
     
-    print(f"Already installed: {already_installed}")
-    print(f"Need to install: {need_install}")
-    print(f"NEED_INSTALL:{json.dumps(need_install)}")
+    print(f&quot;Already installed: {already_installed}&quot;)
+    print(f&quot;Need to install: {need_install}&quot;)
+    print(f&quot;NEED_INSTALL:{json.dumps(need_install)}&quot;)
     
 except Exception as e:
-    print(f"Error checking packages: {e}")
-    print(f"NEED_INSTALL:{json.dumps(packages_to_check)}")
+    print(f&quot;Error checking packages: {e}&quot;)
+    print(f&quot;NEED_INSTALL:{json.dumps(packages_to_check)}&quot;)
         `);
         
         // Parse packages that need installation
         let packagesToInstall = validPackages;
         
         // Check if checkResult has the expected structure
-        if (checkResult && checkResult.results && checkResult.results[0] && checkResult.results[0].text) {
-          const outputLines = checkResult.results[0].text.split('\n');
+        if (checkResult &amp;&amp; checkResult.results &amp;&amp; checkResult.results[0] &amp;&amp; checkResult.results[0].text) {
+          const outputLines = checkResult.results[0].text.split(&apos;\n&apos;);
           for (const line of outputLines) {
-            if (line.startsWith('NEED_INSTALL:')) {
+            if (line.startsWith(&apos;NEED_INSTALL:&apos;)) {
               try {
-                packagesToInstall = JSON.parse(line.substring('NEED_INSTALL:'.length));
+                packagesToInstall = JSON.parse(line.substring(&apos;NEED_INSTALL:&apos;.length));
               } catch (e) {
-                console.error('Failed to parse packages to install:', e);
+                console.error(&apos;Failed to parse packages to install:&apos;, e);
               }
             }
           }
         } else {
-          console.error('[install-packages] Invalid checkResult structure:', checkResult);
-          // If we can't check, just try to install all packages
+          console.error(&apos;[install-packages] Invalid checkResult structure:&apos;, checkResult);
+          // If we can&apos;t check, just try to install all packages
           packagesToInstall = validPackages;
         }
         
         
         if (packagesToInstall.length === 0) {
           await sendProgress({ 
-            type: 'success', 
-            message: 'All packages are already installed',
+            type: &apos;success&apos;, 
+            message: &apos;All packages are already installed&apos;,
             installedPackages: [],
             alreadyInstalled: validPackages
           });
           return;
         }
         
-        // Install only packages that aren't already installed
-        const packageList = packagesToInstall.join(' ');
-        // Only send the npm install command message if we're actually installing new packages
+        // Install only packages that aren&apos;t already installed
+        const packageList = packagesToInstall.join(&apos; &apos;);
+        // Only send the npm install command message if we&apos;re actually installing new packages
         await sendProgress({ 
-          type: 'info', 
-          message: `Installing ${packagesToInstall.length} new package(s): ${packagesToInstall.join(', ')}`
+          type: &apos;info&apos;, 
+          message: `Installing ${packagesToInstall.length} new package(s): ${packagesToInstall.join(&apos;, &apos;)}`
         });
         
         const installResult = await sandboxInstance.runCode(`
 import subprocess
 import os
 
-os.chdir('/home/user/app')
+os.chdir(&apos;/home/user/app&apos;)
 
 # Run npm install with output capture
 packages_to_install = ${JSON.stringify(packagesToInstall)}
-cmd_args = ['npm', 'install', '--legacy-peer-deps'] + packages_to_install
+cmd_args = [&apos;npm&apos;, &apos;install&apos;, &apos;--legacy-peer-deps&apos;] + packages_to_install
 
-print(f"Running command: {' '.join(cmd_args)}")
+print(f&quot;Running command: {&apos; &apos;.join(cmd_args)}&quot;)
 
 process = subprocess.Popen(
     cmd_args,
@@ -214,7 +214,7 @@ process = subprocess.Popen(
 # Stream output
 while True:
     output = process.stdout.readline()
-    if output == '' and process.poll() is not None:
+    if output == &apos;&apos; and process.poll() is not None:
         break
     if output:
         print(output.strip())
@@ -225,47 +225,47 @@ rc = process.poll()
 # Capture any stderr
 stderr = process.stderr.read()
 if stderr:
-    print("STDERR:", stderr)
-    if 'ERESOLVE' in stderr:
-        print("ERESOLVE_ERROR: Dependency conflict detected - using --legacy-peer-deps flag")
+    print(&quot;STDERR:&quot;, stderr)
+    if &apos;ERESOLVE&apos; in stderr:
+        print(&quot;ERESOLVE_ERROR: Dependency conflict detected - using --legacy-peer-deps flag&quot;)
 
-print(f"\\nInstallation completed with code: {rc}")
+print(f&quot;\\nInstallation completed with code: {rc}&quot;)
 
 # Verify packages were installed
 import json
-with open('/home/user/app/package.json', 'r') as f:
+with open(&apos;/home/user/app/package.json&apos;, &apos;r&apos;) as f:
     package_json = json.load(f)
     
 installed = []
 for pkg in ${JSON.stringify(packagesToInstall)}:
-    if pkg in package_json.get('dependencies', {}):
+    if pkg in package_json.get(&apos;dependencies&apos;, {}):
         installed.append(pkg)
-        print(f"✓ Verified {pkg}")
+        print(f&quot;✓ Verified {pkg}&quot;)
     else:
-        print(f"✗ Package {pkg} not found in dependencies")
+        print(f&quot;✗ Package {pkg} not found in dependencies&quot;)
         
-print(f"\\nVerified installed packages: {installed}")
+print(f&quot;\\nVerified installed packages: {installed}&quot;)
         `, { timeout: 60000 }); // 60 second timeout for npm install
         
         // Send npm output
-        const output = installResult?.output || installResult?.logs?.stdout?.join('\n') || '';
-        const npmOutputLines = output.split('\n').filter((line: string) => line.trim());
+        const output = installResult?.output || installResult?.logs?.stdout?.join(&apos;\n&apos;) || &apos;&apos;;
+        const npmOutputLines = output.split(&apos;\n&apos;).filter((line: string) =&amp;gt; line.trim());
         for (const line of npmOutputLines) {
-          if (line.includes('STDERR:')) {
-            const errorMsg = line.replace('STDERR:', '').trim();
-            if (errorMsg && errorMsg !== 'undefined') {
-              await sendProgress({ type: 'error', message: errorMsg });
+          if (line.includes(&apos;STDERR:&apos;)) {
+            const errorMsg = line.replace(&apos;STDERR:&apos;, &apos;&apos;).trim();
+            if (errorMsg &amp;&amp; errorMsg !== &apos;undefined&apos;) {
+              await sendProgress({ type: &apos;error&apos;, message: errorMsg });
             }
-          } else if (line.includes('ERESOLVE_ERROR:')) {
-            const msg = line.replace('ERESOLVE_ERROR:', '').trim();
+          } else if (line.includes(&apos;ERESOLVE_ERROR:&apos;)) {
+            const msg = line.replace(&apos;ERESOLVE_ERROR:&apos;, &apos;&apos;).trim();
             await sendProgress({ 
-              type: 'warning', 
+              type: &apos;warning&apos;, 
               message: `Dependency conflict resolved with --legacy-peer-deps: ${msg}` 
             });
-          } else if (line.includes('npm WARN')) {
-            await sendProgress({ type: 'warning', message: line });
-          } else if (line.trim() && !line.includes('undefined')) {
-            await sendProgress({ type: 'output', message: line });
+          } else if (line.includes(&apos;npm WARN&apos;)) {
+            await sendProgress({ type: &apos;warning&apos;, message: line });
+          } else if (line.trim() &amp;&amp; !line.includes(&apos;undefined&apos;)) {
+            await sendProgress({ type: &apos;output&apos;, message: line });
           }
         }
         
@@ -273,78 +273,78 @@ print(f"\\nVerified installed packages: {installed}")
         const installedMatch = output.match(/Verified installed packages: \[(.*?)\]/);
         let installedPackages: string[] = [];
         
-        if (installedMatch && installedMatch[1]) {
+        if (installedMatch &amp;&amp; installedMatch[1]) {
           installedPackages = installedMatch[1]
-            .split(',')
-            .map((p: string) => p.trim().replace(/'/g, ''))
-            .filter((p: string) => p.length > 0);
+            .split(&apos;,&apos;)
+            .map((p: string) =&amp;gt; p.trim().replace(/&apos;/g, &apos;&apos;))
+            .filter((p: string) =&amp;gt; p.length &amp;gt; 0);
         }
         
-        if (installedPackages.length > 0) {
+        if (installedPackages.length &amp;gt; 0) {
           await sendProgress({ 
-            type: 'success', 
-            message: `Successfully installed: ${installedPackages.join(', ')}`,
+            type: &apos;success&apos;, 
+            message: `Successfully installed: ${installedPackages.join(&apos;, &apos;)}`,
             installedPackages 
           });
         } else {
           await sendProgress({ 
-            type: 'error', 
-            message: 'Failed to verify package installation' 
+            type: &apos;error&apos;, 
+            message: &apos;Failed to verify package installation&apos; 
           });
         }
         
         // Restart Vite dev server
-        await sendProgress({ type: 'status', message: 'Restarting development server...' });
+        await sendProgress({ type: &apos;status&apos;, message: &apos;Restarting development server...&apos; });
         
         await sandboxInstance.runCode(`
 import subprocess
 import os
 import time
 
-os.chdir('/home/user/app')
+os.chdir(&apos;/home/user/app&apos;)
 
 # Kill any existing Vite processes
-subprocess.run(['pkill', '-f', 'vite'], capture_output=True)
+subprocess.run([&apos;pkill&apos;, &apos;-f&apos;, &apos;vite&apos;], capture_output=True)
 time.sleep(1)
 
 # Start Vite dev server
 env = os.environ.copy()
-env['FORCE_COLOR'] = '0'
+env[&apos;FORCE_COLOR&apos;] = &apos;0&apos;
 
 process = subprocess.Popen(
-    ['npm', 'run', 'dev'],
+    [&apos;npm&apos;, &apos;run&apos;, &apos;dev&apos;],
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
     env=env
 )
 
-print(f'✓ Vite dev server restarted with PID: {process.pid}')
+print(f&apos;✓ Vite dev server restarted with PID: {process.pid}&apos;)
 
 # Store process info for later
-with open('/tmp/vite-process.pid', 'w') as f:
+with open(&apos;/tmp/vite-process.pid&apos;, &apos;w&apos;) as f:
     f.write(str(process.pid))
 
 # Wait a bit for Vite to start up
 time.sleep(3)
 
 # Touch files to trigger Vite reload
-subprocess.run(['touch', '/home/user/app/package.json'])
-subprocess.run(['touch', '/home/user/app/vite.config.js'])
+subprocess.run([&apos;touch&apos;, &apos;/home/user/app/package.json&apos;])
+subprocess.run([&apos;touch&apos;, &apos;/home/user/app/vite.config.js&apos;])
 
-print("Vite restarted and should now recognize all packages")
+print(&quot;Vite restarted and should now recognize all packages&quot;)
         `);
         
         await sendProgress({ 
-          type: 'complete', 
-          message: 'Package installation complete and dev server restarted!',
+          type: &apos;complete&apos;, 
+          message: &apos;Package installation complete and dev server restarted!&apos;,
           installedPackages 
         });
         
       } catch (error) {
         const errorMessage = (error as Error).message;
-        if (errorMessage && errorMessage !== 'undefined') {
+        if (errorMessage &amp;&amp; errorMessage !== &apos;undefined&apos;) {
           await sendProgress({ 
-            type: 'error', 
+            type: &apos;error&apos;, 
             message: errorMessage
           });
         }
@@ -356,14 +356,14 @@ print("Vite restarted and should now recognize all packages")
     // Return the stream
     return new Response(stream.readable, {
       headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+        &apos;Content-Type&apos;: &apos;text/event-stream&apos;,
+        &apos;Cache-Control&apos;: &apos;no-cache&apos;,
+        &apos;Connection&apos;: &apos;keep-alive&apos;,
       },
     });
     
   } catch (error) {
-    console.error('[install-packages] Error:', error);
+    console.error(&apos;[install-packages] Error:&apos;, error);
     return NextResponse.json({ 
       success: false, 
       error: (error as Error).message 

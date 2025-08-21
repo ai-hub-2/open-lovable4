@@ -1,7 +1,7 @@
-export const dynamic = "force-static";
+export const dynamic = &quot;force-static&quot;;
 
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from &apos;next/server&apos;;
 
 declare global {
   var activeSandbox: any;
@@ -11,29 +11,29 @@ export async function POST(request: NextRequest) {
   try {
     const { files } = await request.json();
     
-    if (!files || typeof files !== 'object') {
+    if (!files || typeof files !== &apos;object&apos;) {
       return NextResponse.json({ 
         success: false, 
-        error: 'Files object is required' 
+        error: &apos;Files object is required&apos; 
       }, { status: 400 });
     }
 
     if (!global.activeSandbox) {
       return NextResponse.json({
         success: false,
-        error: 'No active sandbox'
+        error: &apos;No active sandbox&apos;
       }, { status: 404 });
     }
 
-    console.log('[detect-and-install-packages] Processing files:', Object.keys(files));
+    console.log(&apos;[detect-and-install-packages] Processing files:&apos;, Object.keys(files));
 
     // Extract all import statements from the files
-    const imports = new Set<string>();
-    const importRegex = /import\s+(?:(?:\{[^}]*\}|\*\s+as\s+\w+|\w+)\s*,?\s*)*(?:from\s+)?['"]([^'"]+)['"]/g;
-    const requireRegex = /require\s*\(['"]([^'"]+)['"]\)/g;
+    const imports = new Set&amp;lt;string&amp;gt;();
+    const importRegex = /import\s+(?:(?:\{[^}]*\}|\*\s+as\s+\w+|\w+)\s*,?\s*)*(?:from\s+)?[&apos;&quot;]([^&apos;&quot;]+)[&apos;&quot;]/g;
+    const requireRegex = /require\s*\([&apos;&quot;]([^&apos;&quot;]+)[&apos;&quot;]\)/g;
 
     for (const [filePath, content] of Object.entries(files)) {
-      if (typeof content !== 'string') continue;
+      if (typeof content !== &apos;string&apos;) continue;
       
       // Skip non-JS/JSX/TS/TSX files
       if (!filePath.match(/\.(jsx?|tsx?)$/)) continue;
@@ -50,26 +50,26 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log('[detect-and-install-packages] Found imports:', Array.from(imports));
+    console.log(&apos;[detect-and-install-packages] Found imports:&apos;, Array.from(imports));
     
     // Log specific heroicons imports
-    const heroiconImports = Array.from(imports).filter(imp => imp.includes('heroicons'));
-    if (heroiconImports.length > 0) {
-      console.log('[detect-and-install-packages] Heroicon imports:', heroiconImports);
+    const heroiconImports = Array.from(imports).filter(imp =&amp;gt; imp.includes(&apos;heroicons&apos;));
+    if (heroiconImports.length &amp;gt; 0) {
+      console.log(&apos;[detect-and-install-packages] Heroicon imports:&apos;, heroiconImports);
     }
 
     // Filter out relative imports and built-in modules
-    const packages = Array.from(imports).filter(imp => {
+    const packages = Array.from(imports).filter(imp =&amp;gt; {
       // Skip relative imports
-      if (imp.startsWith('.') || imp.startsWith('/')) return false;
+      if (imp.startsWith(&apos;.&apos;) || imp.startsWith(&apos;/&apos;)) return false;
       
       // Skip built-in Node modules
-      const builtins = ['fs', 'path', 'http', 'https', 'crypto', 'stream', 'util', 'os', 'url', 'querystring', 'child_process'];
+      const builtins = [&apos;fs&apos;, &apos;path&apos;, &apos;http&apos;, &apos;https&apos;, &apos;crypto&apos;, &apos;stream&apos;, &apos;util&apos;, &apos;os&apos;, &apos;url&apos;, &apos;querystring&apos;, &apos;child_process&apos;];
       if (builtins.includes(imp)) return false;
       
       // Extract package name (handle scoped packages and subpaths)
-      const parts = imp.split('/');
-      if (imp.startsWith('@')) {
+      const parts = imp.split(&apos;/&apos;);
+      if (imp.startsWith(&apos;@&apos;)) {
         // Scoped package like @vitejs/plugin-react
         return true;
       } else {
@@ -79,27 +79,27 @@ export async function POST(request: NextRequest) {
     });
 
     // Extract just the package names (without subpaths)
-    const packageNames = packages.map(pkg => {
-      if (pkg.startsWith('@')) {
+    const packageNames = packages.map(pkg =&amp;gt; {
+      if (pkg.startsWith(&apos;@&apos;)) {
         // Scoped package: @scope/package or @scope/package/subpath
-        const parts = pkg.split('/');
-        return parts.slice(0, 2).join('/');
+        const parts = pkg.split(&apos;/&apos;);
+        return parts.slice(0, 2).join(&apos;/&apos;);
       } else {
         // Regular package: package or package/subpath
-        return pkg.split('/')[0];
+        return pkg.split(&apos;/&apos;)[0];
       }
     });
 
     // Remove duplicates
     const uniquePackages = [...new Set(packageNames)];
 
-    console.log('[detect-and-install-packages] Packages to install:', uniquePackages);
+    console.log(&apos;[detect-and-install-packages] Packages to install:&apos;, uniquePackages);
 
     if (uniquePackages.length === 0) {
       return NextResponse.json({
         success: true,
         packagesInstalled: [],
-        message: 'No new packages to install'
+        message: &apos;No new packages to install&apos;
       });
     }
 
@@ -115,10 +115,10 @@ packages = ${JSON.stringify(uniquePackages)}
 
 for package in packages:
     # Handle scoped packages
-    if package.startswith('@'):
-        package_path = f"/home/user/app/node_modules/{package}"
+    if package.startswith(&apos;@&apos;):
+        package_path = f&quot;/home/user/app/node_modules/{package}&quot;
     else:
-        package_path = f"/home/user/app/node_modules/{package}"
+        package_path = f&quot;/home/user/app/node_modules/{package}&quot;
     
     if os.path.exists(package_path):
         installed.append(package)
@@ -126,52 +126,52 @@ for package in packages:
         missing.append(package)
 
 result = {
-    'installed': installed,
-    'missing': missing
+    &apos;installed&apos;: installed,
+    &apos;missing&apos;: missing
 }
 
 print(json.dumps(result))
     `);
 
-    const status = JSON.parse(checkResult.logs.stdout.join(''));
-    console.log('[detect-and-install-packages] Package status:', status);
+    const status = JSON.parse(checkResult.logs.stdout.join(&apos;&apos;));
+    console.log(&apos;[detect-and-install-packages] Package status:&apos;, status);
 
     if (status.missing.length === 0) {
       return NextResponse.json({
         success: true,
         packagesInstalled: [],
         packagesAlreadyInstalled: status.installed,
-        message: 'All packages already installed'
+        message: &apos;All packages already installed&apos;
       });
     }
 
     // Install missing packages
-    console.log('[detect-and-install-packages] Installing packages:', status.missing);
+    console.log(&apos;[detect-and-install-packages] Installing packages:&apos;, status.missing);
     
     const installResult = await global.activeSandbox.runCode(`
 import subprocess
 import os
 import json
 
-os.chdir('/home/user/app')
+os.chdir(&apos;/home/user/app&apos;)
 packages_to_install = ${JSON.stringify(status.missing)}
 
 # Join packages into a single install command
-packages_str = ' '.join(packages_to_install)
-cmd = f'npm install {packages_str} --save'
+packages_str = &apos; &apos;.join(packages_to_install)
+cmd = f&apos;npm install {packages_str} --save&apos;
 
-print(f"Running: {cmd}")
+print(f&quot;Running: {cmd}&quot;)
 
 # Run npm install with explicit save flag
-result = subprocess.run(['npm', 'install', '--save'] + packages_to_install, 
+result = subprocess.run([&apos;npm&apos;, &apos;install&apos;, &apos;--save&apos;] + packages_to_install, 
                        capture_output=True, 
                        text=True, 
-                       cwd='/home/user/app',
+                       cwd=&apos;/home/user/app&apos;,
                        timeout=60)
 
-print("stdout:", result.stdout)
+print(&quot;stdout:&quot;, result.stdout)
 if result.stderr:
-    print("stderr:", result.stderr)
+    print(&quot;stderr:&quot;, result.stderr)
 
 # Verify installation
 installed = []
@@ -179,59 +179,59 @@ failed = []
 
 for package in packages_to_install:
     # Handle scoped packages correctly
-    if package.startswith('@'):
+    if package.startswith(&apos;@&apos;):
         # For scoped packages like @heroicons/react
-        package_path = f"/home/user/app/node_modules/{package}"
+        package_path = f&quot;/home/user/app/node_modules/{package}&quot;
     else:
-        package_path = f"/home/user/app/node_modules/{package}"
+        package_path = f&quot;/home/user/app/node_modules/{package}&quot;
     
     if os.path.exists(package_path):
         installed.append(package)
-        print(f"✓ Verified installation of {package}")
+        print(f&quot;✓ Verified installation of {package}&quot;)
     else:
-        # Check if it's a submodule of an installed package
-        base_package = package.split('/')[0]
-        if package.startswith('@'):
+        # Check if it&apos;s a submodule of an installed package
+        base_package = package.split(&apos;/&apos;)[0]
+        if package.startswith(&apos;@&apos;):
             # For @scope/package, the base is @scope/package
-            base_package = '/'.join(package.split('/')[:2])
+            base_package = &apos;/&apos;.join(package.split(&apos;/&apos;)[:2])
         
-        base_path = f"/home/user/app/node_modules/{base_package}"
+        base_path = f&quot;/home/user/app/node_modules/{base_package}&quot;
         if os.path.exists(base_path):
             installed.append(package)
-            print(f"✓ Verified installation of {package} (via {base_package})")
+            print(f&quot;✓ Verified installation of {package} (via {base_package})&quot;)
         else:
             failed.append(package)
-            print(f"✗ Failed to verify installation of {package}")
+            print(f&quot;✗ Failed to verify installation of {package}&quot;)
 
 result_data = {
-    'installed': installed,
-    'failed': failed,
-    'returncode': result.returncode
+    &apos;installed&apos;: installed,
+    &apos;failed&apos;: failed,
+    &apos;returncode&apos;: result.returncode
 }
 
-print("\\nResult:", json.dumps(result_data))
+print(&quot;\\nResult:&quot;, json.dumps(result_data))
     `, { timeout: 60000 });
 
     // Parse the result more safely
     let installStatus;
     try {
-      const stdout = installResult.logs.stdout.join('');
+      const stdout = installResult.logs.stdout.join(&apos;&apos;);
       const resultMatch = stdout.match(/Result:\s*({.*})/);
       if (resultMatch) {
         installStatus = JSON.parse(resultMatch[1]);
       } else {
         // Fallback parsing
-        const lines = stdout.split('\n');
-        const resultLine = lines.find((line: string) => line.includes('Result:'));
+        const lines = stdout.split(&apos;\n&apos;);
+        const resultLine = lines.find((line: string) =&amp;gt; line.includes(&apos;Result:&apos;));
         if (resultLine) {
-          installStatus = JSON.parse(resultLine.split('Result:')[1].trim());
+          installStatus = JSON.parse(resultLine.split(&apos;Result:&apos;)[1].trim());
         } else {
-          throw new Error('Could not find Result in output');
+          throw new Error(&apos;Could not find Result in output&apos;);
         }
       }
     } catch (parseError) {
-      console.error('[detect-and-install-packages] Failed to parse install result:', parseError);
-      console.error('[detect-and-install-packages] stdout:', installResult.logs.stdout.join(''));
+      console.error(&apos;[detect-and-install-packages] Failed to parse install result:&apos;, parseError);
+      console.error(&apos;[detect-and-install-packages] stdout:&apos;, installResult.logs.stdout.join(&apos;&apos;));
       // Fallback to assuming all packages were installed
       installStatus = {
         installed: status.missing,
@@ -240,8 +240,8 @@ print("\\nResult:", json.dumps(result_data))
       };
     }
 
-    if (installStatus.failed.length > 0) {
-      console.error('[detect-and-install-packages] Failed to install:', installStatus.failed);
+    if (installStatus.failed.length &amp;gt; 0) {
+      console.error(&apos;[detect-and-install-packages] Failed to install:&apos;, installStatus.failed);
     }
 
     return NextResponse.json({
@@ -250,11 +250,11 @@ print("\\nResult:", json.dumps(result_data))
       packagesFailed: installStatus.failed,
       packagesAlreadyInstalled: status.installed,
       message: `Installed ${installStatus.installed.length} packages`,
-      logs: installResult.logs.stdout.join('\n')
+      logs: installResult.logs.stdout.join(&apos;\n&apos;)
     });
 
   } catch (error) {
-    console.error('[detect-and-install-packages] Error:', error);
+    console.error(&apos;[detect-and-install-packages] Error:&apos;, error);
     return NextResponse.json({
       success: false,
       error: (error as Error).message

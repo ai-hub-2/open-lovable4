@@ -1,24 +1,24 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from &quot;next&quot;;
+import { Inter } from &quot;next/font/google&quot;;
+import &quot;./globals.css&quot;;
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: [&quot;latin&quot;] });
 
 export const metadata: Metadata = {
-  title: "Open Lovable",
-  description: "Re-imagine any website in seconds with AI-powered website builder.",
+  title: &quot;Open Lovable&quot;,
+  description: &quot;Re-imagine any website in seconds with AI-powered website builder.&quot;,
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: Readonly&amp;lt;{
   children: React.ReactNode;
-}>) {
+}&amp;gt;) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    &amp;lt;html lang=&quot;en&quot;&amp;gt;
+      &amp;lt;body className={inter.className}&amp;gt;
         {children}
-      </body>
-    </html>
+      &amp;lt;/body&amp;gt;
+    &amp;lt;/html&amp;gt;
   );
 }

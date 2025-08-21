@@ -1,7 +1,7 @@
-export const dynamic = "force-static";
+export const dynamic = &quot;force-static&quot;;
 
 
-import { NextResponse } from 'next/server';
+import { NextResponse } from &apos;next/server&apos;;
 
 // Stub endpoint to prevent 404 errors
 // This endpoint is being called but the source is unknown
@@ -10,6 +10,6 @@ export async function GET() {
   return NextResponse.json({
     success: true,
     errors: [],
-    message: 'No Vite errors detected'
+    message: &apos;No Vite errors detected&apos;
   });
 }

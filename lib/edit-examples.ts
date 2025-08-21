@@ -6,7 +6,7 @@ export const EDIT_EXAMPLES = `
 ## Edit Strategy Examples
 
 ### Example 1: Update Header Color
-USER: "Make the header background black"
+USER: &quot;Make the header background black&quot;
 
 CORRECT APPROACH:
 1. Identify Header component location
@@ -19,13 +19,13 @@ INCORRECT APPROACH:
 - Modifying unrelated files
 
 EXPECTED OUTPUT:
-<file path="src/components/Header.jsx">
+&amp;lt;file path=&quot;src/components/Header.jsx&quot;&amp;gt;
 // Only the Header component with updated background
 // Preserving all existing functionality
-</file>
+&amp;lt;/file&amp;gt;
 
 ### Example 2: Add New Page
-USER: "Add a videos page"
+USER: &quot;Add a videos page&quot;
 
 CORRECT APPROACH:
 1. Create Videos.jsx component
@@ -37,20 +37,20 @@ INCORRECT APPROACH:
 - Recreating all existing pages
 
 EXPECTED OUTPUT:
-<file path="src/components/Videos.jsx">
+&amp;lt;file path=&quot;src/components/Videos.jsx&quot;&amp;gt;
 // New Videos component
-</file>
+&amp;lt;/file&amp;gt;
 
-<file path="src/App.jsx">
+&amp;lt;file path=&quot;src/App.jsx&quot;&amp;gt;
 // ONLY the routing update, preserving everything else
-</file>
+&amp;lt;/file&amp;gt;
 
 ### Example 3: Fix Styling Issue
-USER: "Fix the button styling on mobile"
+USER: &quot;Fix the button styling on mobile&quot;
 
 CORRECT APPROACH:
 1. Identify which component has the button
-2. Update only that component's Tailwind classes
+2. Update only that component&apos;s Tailwind classes
 3. Add responsive modifiers (sm:, md:, etc)
 
 INCORRECT APPROACH:
@@ -59,7 +59,7 @@ INCORRECT APPROACH:
 - Modifying global styles unnecessarily
 
 ### Example 4: Add Feature to Component
-USER: "Add a search bar to the header"
+USER: &quot;Add a search bar to the header&quot;
 
 CORRECT APPROACH:
 1. Modify Header.jsx to add search functionality
@@ -71,27 +71,27 @@ INCORRECT APPROACH:
 - Losing existing navigation/branding
 
 ### Example 5: Add New Component
-USER: "Add a newsletter signup to the footer"
+USER: &quot;Add a newsletter signup to the footer&quot;
 
 CORRECT APPROACH:
 1. Create Newsletter.jsx component
 2. UPDATE Footer.jsx to import Newsletter
-3. Add <Newsletter /> in the appropriate place in Footer
+3. Add &amp;lt;Newsletter /&amp;gt; in the appropriate place in Footer
 
 EXPECTED OUTPUT:
-<file path="src/components/Newsletter.jsx">
+&amp;lt;file path=&quot;src/components/Newsletter.jsx&quot;&amp;gt;
 // New Newsletter component
-</file>
+&amp;lt;/file&amp;gt;
 
-<file path="src/components/Footer.jsx">
+&amp;lt;file path=&quot;src/components/Footer.jsx&quot;&amp;gt;
 // Updated Footer with Newsletter import and usage
-import Newsletter from './Newsletter';
+import Newsletter from &apos;./Newsletter&apos;;
 // ... existing code ...
-// Add <Newsletter /> in the render
-</file>
+// Add &amp;lt;Newsletter /&amp;gt; in the render
+&amp;lt;/file&amp;gt;
 
 ### Example 6: Add External Library
-USER: "Add animations with framer-motion to the hero"
+USER: &quot;Add animations with framer-motion to the hero&quot;
 
 CORRECT APPROACH:
 1. Import framer-motion in Hero.jsx
@@ -99,16 +99,16 @@ CORRECT APPROACH:
 3. System will auto-install framer-motion
 
 EXPECTED OUTPUT:
-<file path="src/components/Hero.jsx">
-import { motion } from 'framer-motion';
+&amp;lt;file path=&quot;src/components/Hero.jsx&quot;&amp;gt;
+import { motion } from &apos;framer-motion&apos;;
 // ... rest of Hero with motion animations
-</file>
+&amp;lt;/file&amp;gt;
 
 ### Example 7: Remove Element
-USER: "Remove start deploying button"
+USER: &quot;Remove start deploying button&quot;
 
 CORRECT APPROACH:
-1. Search for "start deploying" in all component files
+1. Search for &quot;start deploying&quot; in all component files
 2. Find it in Hero.jsx
 3. Edit ONLY Hero.jsx to remove that button
 
@@ -118,13 +118,13 @@ INCORRECT APPROACH:
 - Redesigning the entire Hero
 
 EXPECTED OUTPUT:
-<file path="src/components/Hero.jsx">
-// Hero component with "start deploying" button removed
+&amp;lt;file path=&quot;src/components/Hero.jsx&quot;&amp;gt;
+// Hero component with &quot;start deploying&quot; button removed
 // All other content preserved
-</file>
+&amp;lt;/file&amp;gt;
 
 ### Example 8: Delete Section
-USER: "Delete the testimonials section"
+USER: &quot;Delete the testimonials section&quot;
 
 CORRECT APPROACH:
 1. Find which file contains testimonials
@@ -136,57 +136,57 @@ INCORRECT APPROACH:
 - Recreating the page without testimonials
 
 ### Example 9: Change a Single Style (CRITICAL EXAMPLE)
-USER: "update the hero to bg blue"
+USER: &quot;update the hero to bg blue&quot;
 
 CORRECT APPROACH:
-1. Identify the Hero component file: 'src/components/Hero.jsx'.
-2. Locate the outermost 'div' or container element.
-3. Find the existing background color class (e.g., 'bg-gray-900').
-4. Replace ONLY that class with 'bg-blue-500'.
+1. Identify the Hero component file: &apos;src/components/Hero.jsx&apos;.
+2. Locate the outermost &apos;div&apos; or container element.
+3. Find the existing background color class (e.g., &apos;bg-gray-900&apos;).
+4. Replace ONLY that class with &apos;bg-blue-500&apos;.
 5. Return the entire file, completely unchanged except for that single class modification.
 
 **Original File Content (BEFORE):**
-<file path="src/components/Hero.jsx">
-import React from 'react';
+&amp;lt;file path=&quot;src/components/Hero.jsx&quot;&amp;gt;
+import React from &apos;react&apos;;
 
 export default function Hero() {
   return (
-    <div className="w-full bg-gray-900 text-white py-20 px-4">
-      <h1 className="text-5xl font-bold">Welcome to the App</h1>
-      <p className="mt-4 text-lg">This is the original hero section.</p>
-      <button className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg">
+    &amp;lt;div className=&quot;w-full bg-gray-900 text-white py-20 px-4&quot;&amp;gt;
+      &amp;lt;h1 className=&quot;text-5xl font-bold&quot;&amp;gt;Welcome to the App&amp;lt;/h1&amp;gt;
+      &amp;lt;p className=&quot;mt-4 text-lg&quot;&amp;gt;This is the original hero section.&amp;lt;/p&amp;gt;
+      &amp;lt;button className=&quot;mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg&quot;&amp;gt;
         Get Started
-      </button>
-    </div>
+      &amp;lt;/button&amp;gt;
+    &amp;lt;/div&amp;gt;
   );
 }
-</file>
+&amp;lt;/file&amp;gt;
 
 **Expected Output (AFTER):**
-<file path="src/components/Hero.jsx">
-import React from 'react';
+&amp;lt;file path=&quot;src/components/Hero.jsx&quot;&amp;gt;
+import React from &apos;react&apos;;
 
 export default function Hero() {
   return (
-    <div className="w-full bg-blue-500 text-white py-20 px-4">
-      <h1 className="text-5xl font-bold">Welcome to the App</h1>
-      <p className="mt-4 text-lg">This is the original hero section.</p>
-      <button className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg">
+    &amp;lt;div className=&quot;w-full bg-blue-500 text-white py-20 px-4&quot;&amp;gt;
+      &amp;lt;h1 className=&quot;text-5xl font-bold&quot;&amp;gt;Welcome to the App&amp;lt;/h1&amp;gt;
+      &amp;lt;p className=&quot;mt-4 text-lg&quot;&amp;gt;This is the original hero section.&amp;lt;/p&amp;gt;
+      &amp;lt;button className=&quot;mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg&quot;&amp;gt;
         Get Started
-      </button>
-    </div>
+      &amp;lt;/button&amp;gt;
+    &amp;lt;/div&amp;gt;
   );
 }
-</file>
+&amp;lt;/file&amp;gt;
 
-NOTICE: Everything remains EXACTLY the same except 'bg-gray-900' → 'bg-blue-500'. 
+NOTICE: Everything remains EXACTLY the same except &apos;bg-gray-900&apos; → &apos;bg-blue-500&apos;. 
 - The button still has bg-blue-600 (unchanged)
 - All text, structure, imports are identical
-- No reformatting, no "improvements", no cleanup
+- No reformatting, no &quot;improvements&quot;, no cleanup
 
 ## Key Principles
 
-1. **Minimal Changes**: Only modify what's necessary
+1. **Minimal Changes**: Only modify what&apos;s necessary
 2. **Preserve Functionality**: Keep all existing features
 3. **Respect Structure**: Follow existing patterns
 4. **Target Precision**: Edit specific files, not everything
@@ -194,13 +194,13 @@ NOTICE: Everything remains EXACTLY the same except 'bg-gray-900' → 'bg-blue-50
 
 ## File Identification Patterns
 
-- "header" → src/components/Header.jsx
-- "navigation" → src/components/Nav.jsx or Header.jsx
-- "footer" → src/components/Footer.jsx
-- "home page" → src/App.jsx or src/pages/Home.jsx
-- "styling" → Component files (Tailwind) or index.css
-- "routing" → App.jsx or Router component
-- "layout" → Layout components or App.jsx
+- &quot;header&quot; → src/components/Header.jsx
+- &quot;navigation&quot; → src/components/Nav.jsx or Header.jsx
+- &quot;footer&quot; → src/components/Footer.jsx
+- &quot;home page&quot; → src/App.jsx or src/pages/Home.jsx
+- &quot;styling&quot; → Component files (Tailwind) or index.css
+- &quot;routing&quot; → App.jsx or Router component
+- &quot;layout&quot; → Layout components or App.jsx
 
 ## Edit Intent Classification
 
