@@ -35,7 +35,7 @@ npm run build
 # 6️⃣ ربط Cloudflare Pages (تأكد أنك فعلت الحساب)
 echo "🌐 نشر المشروع على Cloudflare Pages..."
 # هنا يستخدم wrangler لنشر المشروع
-wrangler pages publish out --project-name=open-lovable4
+wrangler pages deploy --project-name=open-lovable4
 
 # 7️⃣ التحقق من آخر نشر
 echo "✅ التحقق من آخر نشر..."

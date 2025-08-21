@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { appConfig } from '@/config/app.config';
 import { Button } from '@/components/ui/button';
@@ -42,7 +42,7 @@ interface ChatMessage {
   };
 }
 
-export default function AISandboxPage() {
+function AISandboxPageContent() {
   const [sandboxData, setSandboxData] = useState<SandboxData | null>(null);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState({ text: 'Not connected', active: false });
@@ -530,7 +530,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   } else if (data.message.includes('Creating files') || data.message.includes('Applying')) {
                     setCodeApplicationState({ 
                       stage: 'applying',
-                      filesGenerated: results.filesCreated 
+                      filesGenerated: data.filesCreated || 0
                     });
                   }
                   break;
@@ -691,32 +691,22 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           log(data.explanation);
         }
         
-        if (data.autoCompleted) {
-          log('Auto-generating missing components...', 'command');
-          
-          if (data.autoCompletedComponents) {
-            setTimeout(() => {
-              log('Auto-generated missing components:', 'info');
-              data.autoCompletedComponents.forEach((comp: string) => {
-                log(`  ${comp}`, 'command');
-              });
-            }, 1000);
-          }
-        } else if (data.warning) {
-          log(data.warning, 'error');
-          
-          if (data.missingImports && data.missingImports.length > 0) {
-            const missingList = data.missingImports.join(', ');
-            addChatMessage(
-              `Ask me to "create the missing components: ${missingList}" to fix these import errors.`,
-              'system'
-            );
-          }
-        }
+        // Handle warnings if they exist
+        // if (data.warning) {
+        //   log(data.warning, 'error');
+        //   
+        //   if (data.missingImports && data.missingImports.length > 0) {
+        //     const missingList = data.missingImports.join(', ');
+        //     addChatMessage(
+        //       `Ask me to "create the missing components: ${missingList}" to fix these import errors.`,
+        //       'system'
+        //     );
+        //   }
+        // }
         
         log('Code applied successfully!');
         console.log('[applyGeneratedCode] Response data:', data);
-        console.log('[applyGeneratedCode] Debug info:', data.debug);
+        console.log('[applyGeneratedCode] Debug info:', (data as any).debug);
         console.log('[applyGeneratedCode] Current sandboxData:', sandboxData);
         console.log('[applyGeneratedCode] Current iframe element:', iframeRef.current);
         console.log('[applyGeneratedCode] Current iframe src:', iframeRef.current?.src);
@@ -1011,7 +1001,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                       // Create a map of edited files
                       const editedFiles = new Set(
                         generationProgress.files
-                          .filter(f => f.edited)
+                          .filter(f => (f as any).edited)
                           .map(f => f.path)
                       );
                       
@@ -1024,7 +1014,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                         if (!fileTree[dir]) fileTree[dir] = [];
                         fileTree[dir].push({
                           name: fileName,
-                          edited: file.edited || false
+                          edited: (file as any).edited || false
                         });
                       });
                       
@@ -1650,7 +1640,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                               type: fileType,
                               completed: true,
                               edited: true
-                            },
+                            } as any,
                             ...updatedState.files.slice(existingFileIndex + 1)
                           ];
                         } else {
@@ -1661,7 +1651,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                             type: fileType,
                             completed: true,
                             edited: false
-                          }];
+                          } as any];
                         }
                         
                         // Only show file status if not in edit mode
@@ -2587,7 +2577,7 @@ Focus on the key sections and content, making it clean and modern.`;
                               type: fileType,
                               completed: true,
                               edited: true
-                            },
+                            } as any,
                             ...updatedState.files.slice(existingFileIndex + 1)
                           ];
                         } else {
@@ -2598,7 +2588,7 @@ Focus on the key sections and content, making it clean and modern.`;
                             type: fileType,
                             completed: true,
                             edited: false
-                          }];
+                          } as any];
                         }
                         
                         // Only show file status if not in edit mode
@@ -2991,7 +2981,7 @@ Focus on the key sections and content, making it clean and modern.`;
                 >
                   {appConfig.ai.availableModels.map(model => (
                     <option key={model} value={model}>
-                      {appConfig.ai.modelDisplayNames[model] || model}
+                      {(appConfig.ai.modelDisplayNames as any)[model] || model}
                     </option>
                   ))}
                 </select>
@@ -3027,7 +3017,7 @@ Focus on the key sections and content, making it clean and modern.`;
           >
             {appConfig.ai.availableModels.map(model => (
               <option key={model} value={model}>
-                {appConfig.ai.modelDisplayNames[model] || model}
+                {(appConfig.ai.modelDisplayNames as any)[model] || model}
               </option>
             ))}
           </select>
@@ -3425,5 +3415,13 @@ Focus on the key sections and content, making it clean and modern.`;
 
 
     </div>
+  );
+}
+
+export default function AISandboxPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AISandboxPageContent />
+    </Suspense>
   );
 }
