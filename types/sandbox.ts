@@ -6,7 +6,7 @@ export interface SandboxFile {
 }
 
 export interface SandboxFileCache {
-  files: Record&amp;lt;string, SandboxFile&amp;gt;;
+  files: Record<string, SandboxFile>;
   lastSync: number;
   sandboxId: string;
   manifest?: any; // FileManifest type from file-manifest.ts
@@ -25,7 +25,7 @@ export interface SandboxState {
 declare global {
   var activeSandbox: any;
   var sandboxState: SandboxState;
-  var existingFiles: Set&amp;lt;string&amp;gt;;
+  var existingFiles: Set<string>;
 }
 
 export {};

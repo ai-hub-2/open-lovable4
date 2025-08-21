@@ -1,7 +1,7 @@
-import type { NextConfig } from &quot;next&quot;;
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: &apos;export&apos;,
+  output: "export",
   trailingSlash: true,
   images: {
     unoptimized: true

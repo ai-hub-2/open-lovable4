@@ -1,9 +1,9 @@
-import { FileInfo, ImportInfo, ComponentInfo } from &apos;@/types/file-manifest&apos;;
+import { FileInfo, ImportInfo, ComponentInfo } from '@/types/file-manifest';
 
 /**
  * Parse a JavaScript/JSX file to extract imports, exports, and component info
  */
-export function parseJavaScriptFile(content: string, filePath: string): Partial&amp;lt;FileInfo&amp;gt; {
+export function parseJavaScriptFile(content: string, filePath: string): Partial<FileInfo> {
   const imports = extractImports(content);
   const exports = extractExports(content);
   const componentInfo = extractComponentInfo(content, filePath);
@@ -24,7 +24,7 @@ function extractImports(content: string): ImportInfo[] {
   const imports: ImportInfo[] = [];
   
   // Match import statements
-  const importRegex = /import\s+(?:(.+?)\s+from\s+)?[&apos;&quot;](.+?)[&apos;&quot;]/g;
+  const importRegex = /import\s+(?:(.+?)\s+from\s+)?['"](.+?)['"]/g;
   const matches = content.matchAll(importRegex);
   
   for (const match of matches) {
@@ -32,7 +32,7 @@ function extractImports(content: string): ImportInfo[] {
     const importInfo: ImportInfo = {
       source,
       imports: [],
-      isLocal: source.startsWith(&apos;./&apos;) || source.startsWith(&apos;../&apos;) || source.startsWith(&apos;@/&apos;),
+      isLocal: source.startsWith('./') || source.startsWith('../') || source.startsWith('@/'),
     };
     
     if (importClause) {
@@ -46,9 +46,9 @@ function extractImports(content: string): ImportInfo[] {
       const namedMatch = importClause.match(/\{([^}]+)\}/);
       if (namedMatch) {
         importInfo.imports = namedMatch[1]
-          .split(&apos;,&apos;)
-          .map(imp =&amp;gt; imp.trim())
-          .map(imp =&amp;gt; imp.split(/\s+as\s+/)[0].trim());
+          .split(',')
+          .map(imp => imp.trim())
+          .map(imp => imp.split(/\s+as\s+/)[0].trim());
       }
     }
     
@@ -71,7 +71,7 @@ function extractExports(content: string): string[] {
     if (defaultExportMatch) {
       exports.push(`default:${defaultExportMatch[1]}`);
     } else {
-      exports.push(&apos;default&apos;);
+      exports.push('default');
     }
   }
   
@@ -89,9 +89,9 @@ function extractExports(content: string): string[] {
   
   for (const match of blockMatches) {
     const names = match[1]
-      .split(&apos;,&apos;)
-      .map(exp =&amp;gt; exp.trim())
-      .map(exp =&amp;gt; exp.split(/\s+as\s+/)[0].trim());
+      .split(',')
+      .map(exp => exp.trim())
+      .map(exp => exp.split(/\s+as\s+/)[0].trim());
     exports.push(...names);
   }
   
@@ -103,11 +103,11 @@ function extractExports(content: string): string[] {
  */
 function extractComponentInfo(content: string, filePath: string): ComponentInfo | undefined {
   // Check if this is likely a React component
-  const hasJSX = /&amp;lt;[A-Z]\w*|&amp;lt;[a-z]+\s+[^&amp;gt;]*\/?&amp;gt;/.test(content);
-  if (!hasJSX &amp;&amp; !content.includes(&apos;React&apos;)) return undefined;
+  const hasJSX = /<[A-Z]\w*|<[a-z]+\s+[^>]*\/?>/.test(content);
+  if (!hasJSX && !content.includes('React')) return undefined;
   
   // Try to find component name
-  let componentName = &apos;&apos;;
+  let componentName = '';
   
   // Check for function component
   const funcComponentMatch = content.match(/(?:export\s+)?(?:default\s+)?function\s+([A-Z]\w*)\s*\(/);
@@ -115,7 +115,7 @@ function extractComponentInfo(content: string, filePath: string): ComponentInfo 
     componentName = funcComponentMatch[1];
   } else {
     // Check for arrow function component
-    const arrowComponentMatch = content.match(/(?:export\s+)?(?:default\s+)?(?:const|let)\s+([A-Z]\w*)\s*=\s*(?:\([^)]*\)|[^=])*=&amp;gt;/);
+    const arrowComponentMatch = content.match(/(?:export\s+)?(?:default\s+)?(?:const|let)\s+([A-Z]\w*)\s*=\s*(?:\([^)]*\)|[^=])*=>/);
     if (arrowComponentMatch) {
       componentName = arrowComponentMatch[1];
     }
@@ -123,8 +123,8 @@ function extractComponentInfo(content: string, filePath: string): ComponentInfo 
   
   // If no component name found, try to get from filename
   if (!componentName) {
-    const fileName = filePath.split(&apos;/&apos;).pop()?.replace(/\.(jsx?|tsx?)$/, &apos;&apos;);
-    if (fileName &amp;&amp; /^[A-Z]/.test(fileName)) {
+    const fileName = filePath.split('/').pop()?.replace(/\.(jsx?|tsx?)$/, '');
+    if (fileName && /^[A-Z]/.test(fileName)) {
       componentName = fileName;
     }
   }
@@ -142,16 +142,16 @@ function extractComponentInfo(content: string, filePath: string): ComponentInfo 
   }
   
   // Check if component has state
-  const hasState = hooks.includes(&apos;useState&apos;) || hooks.includes(&apos;useReducer&apos;);
+  const hasState = hooks.includes('useState') || hooks.includes('useReducer');
   
   // Extract child components (rough approximation)
   const childComponents: string[] = [];
-  const componentRegex = /&amp;lt;([A-Z]\w*)[^&amp;gt;]*(?:\/?&amp;gt;|&amp;gt;)/g;
+  const componentRegex = /<([A-Z]\w*)[^>]*(?:\/?>|>)/g;
   const componentMatches = content.matchAll(componentRegex);
   
   for (const match of componentMatches) {
     const comp = match[1];
-    if (!childComponents.includes(comp) &amp;&amp; comp !== componentName) {
+    if (!childComponents.includes(comp) && comp !== componentName) {
       childComponents.push(comp);
     }
   }
@@ -170,64 +170,64 @@ function extractComponentInfo(content: string, filePath: string): ComponentInfo 
 function determineFileType(
   filePath: string,
   content: string
-): FileInfo[&apos;type&apos;] {
-  const fileName = filePath.split(&apos;/&apos;).pop()?.toLowerCase() || &apos;&apos;;
+): FileInfo['type'] {
+  const fileName = filePath.split('/').pop()?.toLowerCase() || '';
   const dirPath = filePath.toLowerCase();
   
   // Style files
-  if (fileName.endsWith(&apos;.css&apos;)) return &apos;style&apos;;
+  if (fileName.endsWith('.css')) return 'style';
   
   // Config files
-  if (fileName.includes(&apos;config&apos;) || 
-      fileName === &apos;vite.config.js&apos; ||
-      fileName === &apos;tailwind.config.js&apos; ||
-      fileName === &apos;postcss.config.js&apos;) {
-    return &apos;config&apos;;
+  if (fileName.includes('config') || 
+      fileName === 'vite.config.js' ||
+      fileName === 'tailwind.config.js' ||
+      fileName === 'postcss.config.js') {
+    return 'config';
   }
   
   // Hook files
-  if (dirPath.includes(&apos;/hooks/&apos;) || fileName.startsWith(&apos;use&apos;)) {
-    return &apos;hook&apos;;
+  if (dirPath.includes('/hooks/') || fileName.startsWith('use')) {
+    return 'hook';
   }
   
   // Context files
-  if (dirPath.includes(&apos;/context/&apos;) || fileName.includes(&apos;context&apos;)) {
-    return &apos;context&apos;;
+  if (dirPath.includes('/context/') || fileName.includes('context')) {
+    return 'context';
   }
   
   // Layout components
-  if (fileName.includes(&apos;layout&apos;) || content.includes(&apos;children&apos;)) {
-    return &apos;layout&apos;;
+  if (fileName.includes('layout') || content.includes('children')) {
+    return 'layout';
   }
   
   // Page components (in pages directory or have routing)
-  if (dirPath.includes(&apos;/pages/&apos;) || 
-      content.includes(&apos;useRouter&apos;) ||
-      content.includes(&apos;useParams&apos;)) {
-    return &apos;page&apos;;
+  if (dirPath.includes('/pages/') || 
+      content.includes('useRouter') ||
+      content.includes('useParams')) {
+    return 'page';
   }
   
   // Utility files
-  if (dirPath.includes(&apos;/utils/&apos;) || 
-      dirPath.includes(&apos;/lib/&apos;) ||
-      !content.includes(&apos;export default&apos;)) {
-    return &apos;utility&apos;;
+  if (dirPath.includes('/utils/') || 
+      dirPath.includes('/lib/') ||
+      !content.includes('export default')) {
+    return 'utility';
   }
   
   // Default to component
-  return &apos;component&apos;;
+  return 'component';
 }
 
 /**
  * Build component dependency tree
  */
-export function buildComponentTree(files: Record&amp;lt;string, FileInfo&amp;gt;) {
-  const tree: Record&amp;lt;string, {
+export function buildComponentTree(files: Record<string, FileInfo>) {
+  const tree: Record<string, {
     file: string;
     imports: string[];
     importedBy: string[];
-    type: &apos;page&apos; | &apos;layout&apos; | &apos;component&apos;;
-  }&amp;gt; = {};
+    type: 'page' | 'layout' | 'component';
+  }> = {};
   
   // First pass: collect all components
   for (const [path, fileInfo] of Object.entries(files)) {
@@ -237,20 +237,20 @@ export function buildComponentTree(files: Record&amp;lt;string, FileInfo&amp;gt;
         file: path,
         imports: [],
         importedBy: [],
-        type: fileInfo.type === &apos;page&apos; ? &apos;page&apos; : 
-              fileInfo.type === &apos;layout&apos; ? &apos;layout&apos; : &apos;component&apos;,
+        type: fileInfo.type === 'page' ? 'page' : 
+              fileInfo.type === 'layout' ? 'layout' : 'component',
       };
     }
   }
   
   // Second pass: build relationships
   for (const [path, fileInfo] of Object.entries(files)) {
-    if (fileInfo.componentInfo &amp;&amp; fileInfo.imports) {
+    if (fileInfo.componentInfo && fileInfo.imports) {
       const componentName = fileInfo.componentInfo.name;
       
       // Find imported components
       for (const imp of fileInfo.imports) {
-        if (imp.isLocal &amp;&amp; imp.defaultImport) {
+        if (imp.isLocal && imp.defaultImport) {
           // Check if this import is a component we know about
           if (tree[imp.defaultImport]) {
             tree[componentName].imports.push(imp.defaultImport);

@@ -1,25 +1,25 @@
-export const dynamic = &quot;force-static&quot;;
+export const dynamic = "force-static";
 
 
-import { NextRequest, NextResponse } from &apos;next/server&apos;;
+import { NextRequest, NextResponse } from 'next/server';
 
 declare global {
   var viteErrors: any[];
 }
 
-// Initialize global viteErrors array if it doesn&apos;t exist
+// Initialize global viteErrors array if it doesn't exist
 if (!global.viteErrors) {
   global.viteErrors = [];
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { error, file, type = &apos;runtime-error&apos; } = await request.json();
+    const { error, file, type = 'runtime-error' } = await request.json();
     
     if (!error) {
       return NextResponse.json({ 
         success: false, 
-        error: &apos;Error message is required&apos; 
+        error: 'Error message is required' 
       }, { status: 400 });
     }
     
@@ -27,14 +27,14 @@ export async function POST(request: NextRequest) {
     const errorObj: any = {
       type,
       message: error,
-      file: file || &apos;unknown&apos;,
+      file: file || 'unknown',
       timestamp: new Date().toISOString()
     };
     
-    // Extract import information if it&apos;s an import error
-    const importMatch = error.match(/Failed to resolve import [&apos;&quot;]([^&apos;&quot;]+)[&apos;&quot;] from [&apos;&quot;]([^&apos;&quot;]+)[&apos;&quot;]/);
+    // Extract import information if it's an import error
+    const importMatch = error.match(/Failed to resolve import ['"]([^'"]+)['"] from ['"]([^'"]+)['"]/);
     if (importMatch) {
-      errorObj.type = &apos;import-error&apos;;
+      errorObj.type = 'import-error';
       errorObj.import = importMatch[1];
       errorObj.file = importMatch[2];
     }
@@ -43,20 +43,20 @@ export async function POST(request: NextRequest) {
     global.viteErrors.push(errorObj);
     
     // Keep only last 50 errors
-    if (global.viteErrors.length &amp;gt; 50) {
+    if (global.viteErrors.length > 50) {
       global.viteErrors = global.viteErrors.slice(-50);
     }
     
-    console.log(&apos;[report-vite-error] Error reported:&apos;, errorObj);
+    console.log('[report-vite-error] Error reported:', errorObj);
     
     return NextResponse.json({
       success: true,
-      message: &apos;Error reported successfully&apos;,
+      message: 'Error reported successfully',
       error: errorObj
     });
     
   } catch (error) {
-    console.error(&apos;[report-vite-error] Error:&apos;, error);
+    console.error('[report-vite-error] Error:', error);
     return NextResponse.json({ 
       success: false, 
       error: (error as Error).message 

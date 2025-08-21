@@ -1,8 +1,8 @@
-export const dynamic = &quot;force-static&quot;;
+export const dynamic = "force-static";
 
 
-import { NextRequest, NextResponse } from &apos;next/server&apos;;
-import type { ConversationState } from &apos;@/types/conversation&apos;;
+import { NextRequest, NextResponse } from 'next/server';
+import type { ConversationState } from '@/types/conversation';
 
 declare global {
   var conversationState: ConversationState | null;
@@ -15,7 +15,7 @@ export async function GET() {
       return NextResponse.json({
         success: true,
         state: null,
-        message: &apos;No active conversation&apos;
+        message: 'No active conversation'
       });
     }
     
@@ -24,7 +24,7 @@ export async function GET() {
       state: global.conversationState
     });
   } catch (error) {
-    console.error(&apos;[conversation-state] Error getting state:&apos;, error);
+    console.error('[conversation-state] Error getting state:', error);
     return NextResponse.json({
       success: false,
       error: (error as Error).message
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const { action, data } = await request.json();
     
     switch (action) {
-      case &apos;reset&apos;:
+      case 'reset':
         global.conversationState = {
           conversationId: `conv-${Date.now()}`,
           startedAt: Date.now(),
@@ -51,20 +51,20 @@ export async function POST(request: NextRequest) {
           }
         };
         
-        console.log(&apos;[conversation-state] Reset conversation state&apos;);
+        console.log('[conversation-state] Reset conversation state');
         
         return NextResponse.json({
           success: true,
-          message: &apos;Conversation state reset&apos;,
+          message: 'Conversation state reset',
           state: global.conversationState
         });
         
-      case &apos;clear-old&apos;:
+      case 'clear-old':
         // Clear old conversation data but keep recent context
         if (!global.conversationState) {
           return NextResponse.json({
             success: false,
-            error: &apos;No active conversation to clear&apos;
+            error: 'No active conversation to clear'
           }, { status: 400 });
         }
         
@@ -74,19 +74,19 @@ export async function POST(request: NextRequest) {
         global.conversationState.context.projectEvolution.majorChanges = 
           global.conversationState.context.projectEvolution.majorChanges.slice(-2);
         
-        console.log(&apos;[conversation-state] Cleared old conversation data&apos;);
+        console.log('[conversation-state] Cleared old conversation data');
         
         return NextResponse.json({
           success: true,
-          message: &apos;Old conversation data cleared&apos;,
+          message: 'Old conversation data cleared',
           state: global.conversationState
         });
         
-      case &apos;update&apos;:
+      case 'update':
         if (!global.conversationState) {
           return NextResponse.json({
             success: false,
-            error: &apos;No active conversation to update&apos;
+            error: 'No active conversation to update'
           }, { status: 400 });
         }
         
@@ -107,18 +107,18 @@ export async function POST(request: NextRequest) {
         
         return NextResponse.json({
           success: true,
-          message: &apos;Conversation state updated&apos;,
+          message: 'Conversation state updated',
           state: global.conversationState
         });
         
       default:
         return NextResponse.json({
           success: false,
-          error: &apos;Invalid action. Use &quot;reset&quot; or &quot;update&quot;&apos;
+          error: 'Invalid action. Use "reset" or "update"'
         }, { status: 400 });
     }
   } catch (error) {
-    console.error(&apos;[conversation-state] Error:&apos;, error);
+    console.error('[conversation-state] Error:', error);
     return NextResponse.json({
       success: false,
       error: (error as Error).message
@@ -131,14 +131,14 @@ export async function DELETE() {
   try {
     global.conversationState = null;
     
-    console.log(&apos;[conversation-state] Cleared conversation state&apos;);
+    console.log('[conversation-state] Cleared conversation state');
     
     return NextResponse.json({
       success: true,
-      message: &apos;Conversation state cleared&apos;
+      message: 'Conversation state cleared'
     });
   } catch (error) {
-    console.error(&apos;[conversation-state] Error clearing state:&apos;, error);
+    console.error('[conversation-state] Error clearing state:', error);
     return NextResponse.json({
       success: false,
       error: (error as Error).message

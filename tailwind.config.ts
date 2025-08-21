@@ -1,64 +1,64 @@
-import type { Config } from &quot;tailwindcss&quot;;
+import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: &quot;class&quot;,
+  darkMode: "class",
   content: [
-    &quot;./pages/**/*.{js,ts,jsx,tsx,mdx}&quot;,
-    &quot;./components/**/*.{js,ts,jsx,tsx,mdx}&quot;,
-    &quot;./app/**/*.{js,ts,jsx,tsx,mdx}&quot;,
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     container: {
       center: true,
-      padding: &quot;2rem&quot;,
+      padding: "2rem",
       screens: {
-        &quot;2xl&quot;: &quot;1400px&quot;,
+        "2xl": "1400px",
       },
     },
     extend: {
       colors: {
-        border: &quot;hsl(var(--border))&quot;,
-        input: &quot;hsl(var(--input))&quot;,
-        ring: &quot;hsl(var(--ring))&quot;,
-        background: &quot;hsl(var(--background))&quot;,
-        foreground: &quot;hsl(var(--foreground))&quot;,
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: &quot;hsl(var(--primary))&quot;,
-          foreground: &quot;hsl(var(--primary-foreground))&quot;,
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: &quot;hsl(var(--secondary))&quot;,
-          foreground: &quot;hsl(var(--secondary-foreground))&quot;,
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: &quot;hsl(var(--destructive))&quot;,
-          foreground: &quot;hsl(var(--destructive-foreground))&quot;,
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: &quot;hsl(var(--muted))&quot;,
-          foreground: &quot;hsl(var(--muted-foreground))&quot;,
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: &quot;hsl(var(--accent))&quot;,
-          foreground: &quot;hsl(var(--accent-foreground))&quot;,
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: &quot;hsl(var(--popover))&quot;,
-          foreground: &quot;hsl(var(--popover-foreground))&quot;,
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: &quot;hsl(var(--card))&quot;,
-          foreground: &quot;hsl(var(--card-foreground))&quot;,
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
       },
       borderRadius: {
-        lg: &quot;var(--radius)&quot;,
-        md: &quot;calc(var(--radius) - 2px)&quot;,
-        sm: &quot;calc(var(--radius) - 4px)&quot;,
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: [&quot;var(--font-inter)&quot;, &quot;ui-sans-serif&quot;, &quot;system-ui&quot;, &quot;sans-serif&quot;],
-        mono: [&quot;ui-monospace&quot;, &quot;SFMono-Regular&quot;, &quot;monospace&quot;],
+        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "monospace"],
       },
     },
   },

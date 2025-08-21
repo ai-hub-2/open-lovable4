@@ -2,7 +2,7 @@
 
 export interface FileInfo {
   content: string;
-  type: &apos;component&apos; | &apos;page&apos; | &apos;style&apos; | &apos;config&apos; | &apos;utility&apos; | &apos;layout&apos; | &apos;hook&apos; | &apos;context&apos;;
+  type: 'component' | 'page' | 'style' | 'config' | 'utility' | 'layout' | 'hook' | 'context';
   exports?: string[]; // Named exports and default export
   imports?: ImportInfo[]; // Dependencies
   lastModified: number;
@@ -12,10 +12,10 @@ export interface FileInfo {
 }
 
 export interface ImportInfo {
-  source: string; // e.g., &apos;./Header&apos;, &apos;react&apos;, &apos;@/components/Button&apos;
+  source: string; // e.g., './Header', 'react', '@/components/Button'
   imports: string[]; // Named imports
   defaultImport?: string; // Default import name
-  isLocal: boolean; // true if starts with &apos;./&apos; or &apos;@/&apos;
+  isLocal: boolean; // true if starts with './' or '@/'
 }
 
 export interface ComponentInfo {
@@ -27,7 +27,7 @@ export interface ComponentInfo {
 }
 
 export interface RouteInfo {
-  path: string; // Route path (e.g., &apos;/videos&apos;, &apos;/about&apos;)
+  path: string; // Route path (e.g., '/videos', '/about')
   component: string; // Component file path
   layout?: string; // Layout component if any
 }
@@ -37,12 +37,12 @@ export interface ComponentTree {
     file: string;
     imports: string[]; // Components it imports
     importedBy: string[]; // Components that import it
-    type: &apos;page&apos; | &apos;layout&apos; | &apos;component&apos;;
+    type: 'page' | 'layout' | 'component';
   }
 }
 
 export interface FileManifest {
-  files: Record&amp;lt;string, FileInfo&amp;gt;;
+  files: Record<string, FileInfo>;
   routes: RouteInfo[];
   componentTree: ComponentTree;
   entryPoint: string; // Usually App.jsx or main.jsx
@@ -52,13 +52,13 @@ export interface FileManifest {
 
 // Edit classification types
 export enum EditType {
-  UPDATE_COMPONENT = &apos;UPDATE_COMPONENT&apos;,    // &quot;update the header&quot;, &quot;change button color&quot;
-  ADD_FEATURE = &apos;ADD_FEATURE&apos;,              // &quot;add a videos page&quot;, &quot;create new component&quot;
-  FIX_ISSUE = &apos;FIX_ISSUE&apos;,                 // &quot;fix the styling&quot;, &quot;resolve error&quot;
-  REFACTOR = &apos;REFACTOR&apos;,                   // &quot;reorganize&quot;, &quot;clean up&quot;
-  FULL_REBUILD = &apos;FULL_REBUILD&apos;,           // &quot;start over&quot;, &quot;recreate everything&quot;
-  UPDATE_STYLE = &apos;UPDATE_STYLE&apos;,           // &quot;change colors&quot;, &quot;update theme&quot;
-  ADD_DEPENDENCY = &apos;ADD_DEPENDENCY&apos;        // &quot;install package&quot;, &quot;add library&quot;
+  UPDATE_COMPONENT = 'UPDATE_COMPONENT',    // "update the header", "change button color"
+  ADD_FEATURE = 'ADD_FEATURE',              // "add a videos page", "create new component"
+  FIX_ISSUE = 'FIX_ISSUE',                 // "fix the styling", "resolve error"
+  REFACTOR = 'REFACTOR',                   // "reorganize", "clean up"
+  FULL_REBUILD = 'FULL_REBUILD',           // "start over", "recreate everything"
+  UPDATE_STYLE = 'UPDATE_STYLE',           // "change colors", "update theme"
+  ADD_DEPENDENCY = 'ADD_DEPENDENCY'        // "install package", "add library"
 }
 
 export interface EditIntent {
@@ -73,5 +73,5 @@ export interface EditIntent {
 export interface IntentPattern {
   patterns: RegExp[];
   type: EditType;
-  fileResolver: (prompt: string, manifest: FileManifest) =&amp;gt; string[];
+  fileResolver: (prompt: string, manifest: FileManifest) => string[];
 }

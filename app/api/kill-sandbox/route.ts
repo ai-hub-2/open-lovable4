@@ -1,17 +1,17 @@
-export const dynamic = &quot;force-static&quot;;
+export const dynamic = "force-static";
 
 
-import { NextResponse } from &apos;next/server&apos;;
+import { NextResponse } from 'next/server';
 
 declare global {
   var activeSandbox: any;
   var sandboxData: any;
-  var existingFiles: Set&amp;lt;string&amp;gt;;
+  var existingFiles: Set<string>;
 }
 
 export async function POST() {
   try {
-    console.log(&apos;[kill-sandbox] Killing active sandbox...&apos;);
+    console.log('[kill-sandbox] Killing active sandbox...');
     
     let sandboxKilled = false;
     
@@ -20,9 +20,9 @@ export async function POST() {
       try {
         await global.activeSandbox.close();
         sandboxKilled = true;
-        console.log(&apos;[kill-sandbox] Sandbox closed successfully&apos;);
+        console.log('[kill-sandbox] Sandbox closed successfully');
       } catch (e) {
-        console.error(&apos;[kill-sandbox] Failed to close sandbox:&apos;, e);
+        console.error('[kill-sandbox] Failed to close sandbox:', e);
       }
       global.activeSandbox = null;
       global.sandboxData = null;
@@ -36,11 +36,11 @@ export async function POST() {
     return NextResponse.json({
       success: true,
       sandboxKilled,
-      message: &apos;Sandbox cleaned up successfully&apos;
+      message: 'Sandbox cleaned up successfully'
     });
     
   } catch (error) {
-    console.error(&apos;[kill-sandbox] Error:&apos;, error);
+    console.error('[kill-sandbox] Error:', error);
     return NextResponse.json(
       { 
         success: false, 

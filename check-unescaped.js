@@ -3,11 +3,11 @@ import path from "path";
 
 const targetExts = [".tsx", ".ts"];
 const forbidden = [
-  { char: ">", safe: "&gt;" },
-  { char: "<", safe: "&lt;" },
-  { char: "&", safe: "&amp;" },
-  { char: "\"", safe: "&quot;" },
-  { char: "'", safe: "&apos;" }
+  { char: ">", safe: ">" },
+  { char: "<", safe: "<" },
+  { char: "&", safe: "&" },
+  { char: "\"", safe: """ },
+  { char: "'", safe: "'" }
 ];
 
 function checkFile(filePath) {

@@ -1,7 +1,7 @@
-export const dynamic = &quot;force-static&quot;;
+export const dynamic = "force-static";
 
 
-import { NextRequest, NextResponse } from &apos;next/server&apos;;
+import { NextRequest, NextResponse } from 'next/server';
 
 declare global {
   var activeSandbox: any;
@@ -12,11 +12,11 @@ export async function GET(request: NextRequest) {
     if (!global.activeSandbox) {
       return NextResponse.json({ 
         success: false, 
-        error: &apos;No active sandbox&apos; 
+        error: 'No active sandbox' 
       }, { status: 400 });
     }
     
-    console.log(&apos;[sandbox-logs] Fetching Vite dev server logs...&apos;);
+    console.log('[sandbox-logs] Fetching Vite dev server logs...');
     
     // Get the last N lines of the Vite dev server output
     const result = await global.activeSandbox.runCode(`
@@ -29,31 +29,31 @@ try:
     log_content = []
     
     # Check if there are any node processes running
-    ps_result = subprocess.run([&apos;ps&apos;, &apos;aux&apos;], capture_output=True, text=True)
-    vite_processes = [line for line in ps_result.stdout.split(&apos;\\n&apos;) if &apos;vite&apos; in line.lower()]
+    ps_result = subprocess.run(['ps', 'aux'], capture_output=True, text=True)
+    vite_processes = [line for line in ps_result.stdout.split('\\n') if 'vite' in line.lower()]
     
     if vite_processes:
-        log_content.append(&quot;Vite is running&quot;)
+        log_content.append("Vite is running")
     else:
-        log_content.append(&quot;Vite process not found&quot;)
+        log_content.append("Vite process not found")
     
     # Try to capture recent console output (this is a simplified approach)
-    # In a real implementation, you&apos;d want to capture the Vite process output directly
+    # In a real implementation, you'd want to capture the Vite process output directly
     print(json.dumps({
-        &quot;hasErrors&quot;: False,
-        &quot;logs&quot;: log_content,
-        &quot;status&quot;: &quot;running&quot; if vite_processes else &quot;stopped&quot;
+        "hasErrors": False,
+        "logs": log_content,
+        "status": "running" if vite_processes else "stopped"
     }))
 except Exception as e:
     print(json.dumps({
-        &quot;hasErrors&quot;: True,
-        &quot;logs&quot;: [str(e)],
-        &quot;status&quot;: &quot;error&quot;
+        "hasErrors": True,
+        "logs": [str(e)],
+        "status": "error"
     }))
     `);
     
     try {
-      const logData = JSON.parse(result.output || &apos;{}&apos;);
+      const logData = JSON.parse(result.output || '{}');
       return NextResponse.json({
         success: true,
         ...logData
@@ -63,12 +63,12 @@ except Exception as e:
         success: true,
         hasErrors: false,
         logs: [result.output],
-        status: &apos;unknown&apos;
+        status: 'unknown'
       });
     }
     
   } catch (error) {
-    console.error(&apos;[sandbox-logs] Error:&apos;, error);
+    console.error('[sandbox-logs] Error:', error);
     return NextResponse.json({ 
       success: false, 
       error: (error as Error).message 

@@ -6,16 +6,16 @@ export {
   FiChevronRight, 
   FiChevronDown,
   FiGithub 
-} from &apos;react-icons/fi&apos;;
+} from 'react-icons/fi';
 
 export { 
   BsFolderFill, 
   BsFolder2Open 
-} from &apos;react-icons/bs&apos;;
+} from 'react-icons/bs';
 
 export { 
   SiJavascript, 
   SiReact, 
   SiCss3, 
   SiJson 
-} from &apos;react-icons/si&apos;;
+} from 'react-icons/si';

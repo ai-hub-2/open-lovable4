@@ -1,8 +1,8 @@
-export const dynamic = &quot;force-static&quot;;
+export const dynamic = "force-static";
 
 
-import { NextRequest, NextResponse } from &apos;next/server&apos;;
-import { Sandbox } from &apos;@e2b/code-interpreter&apos;;
+import { NextRequest, NextResponse } from 'next/server';
+import { Sandbox } from '@e2b/code-interpreter';
 
 // Get active sandbox from global state (in production, use a proper state management solution)
 declare global {
@@ -16,14 +16,14 @@ export async function POST(request: NextRequest) {
     if (!command) {
       return NextResponse.json({ 
         success: false, 
-        error: &apos;Command is required&apos; 
+        error: 'Command is required' 
       }, { status: 400 });
     }
     
     if (!global.activeSandbox) {
       return NextResponse.json({ 
         success: false, 
-        error: &apos;No active sandbox&apos; 
+        error: 'No active sandbox' 
       }, { status: 400 });
     }
     
@@ -33,30 +33,30 @@ export async function POST(request: NextRequest) {
 import subprocess
 import os
 
-os.chdir(&apos;/home/user/app&apos;)
-result = subprocess.run(${JSON.stringify(command.split(&apos; &apos;))}, 
+os.chdir('/home/user/app')
+result = subprocess.run(${JSON.stringify(command.split(' '))}, 
                        capture_output=True, 
                        text=True, 
                        shell=False)
 
-print(&quot;STDOUT:&quot;)
+print("STDOUT:")
 print(result.stdout)
 if result.stderr:
-    print(&quot;\\nSTDERR:&quot;)
+    print("\\nSTDERR:")
     print(result.stderr)
-print(f&quot;\\nReturn code: {result.returncode}&quot;)
+print(f"\\nReturn code: {result.returncode}")
     `);
     
-    const output = result.logs.stdout.join(&apos;\n&apos;);
+    const output = result.logs.stdout.join('\n');
     
     return NextResponse.json({
       success: true,
       output,
-      message: &apos;Command executed successfully&apos;
+      message: 'Command executed successfully'
     });
     
   } catch (error) {
-    console.error(&apos;[run-command] Error:&apos;, error);
+    console.error('[run-command] Error:', error);
     return NextResponse.json({ 
       success: false, 
       error: (error as Error).message 

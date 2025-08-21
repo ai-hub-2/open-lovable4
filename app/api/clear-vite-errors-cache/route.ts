@@ -1,7 +1,7 @@
-export const dynamic = &quot;force-static&quot;;
+export const dynamic = "force-static";
 
 
-import { NextResponse } from &apos;next/server&apos;;
+import { NextResponse } from 'next/server';
 
 declare global {
   var viteErrorsCache: { errors: any[], timestamp: number } | null;
@@ -12,15 +12,15 @@ export async function POST() {
     // Clear the cache
     global.viteErrorsCache = null;
     
-    console.log(&apos;[clear-vite-errors-cache] Cache cleared&apos;);
+    console.log('[clear-vite-errors-cache] Cache cleared');
     
     return NextResponse.json({
       success: true,
-      message: &apos;Vite errors cache cleared&apos;
+      message: 'Vite errors cache cleared'
     });
     
   } catch (error) {
-    console.error(&apos;[clear-vite-errors-cache] Error:&apos;, error);
+    console.error('[clear-vite-errors-cache] Error:', error);
     return NextResponse.json({ 
       success: false, 
       error: (error as Error).message 

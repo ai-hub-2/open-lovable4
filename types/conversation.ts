@@ -2,7 +2,7 @@
 
 export interface ConversationMessage {
   id: string;
-  role: &apos;user&apos; | &apos;assistant&apos;;
+  role: 'user' | 'assistant';
   content: string;
   timestamp: number;
   metadata?: {
@@ -19,24 +19,24 @@ export interface ConversationEdit {
   editType: string;
   targetFiles: string[];
   confidence: number;
-  outcome: &apos;success&apos; | &apos;partial&apos; | &apos;failed&apos;;
+  outcome: 'success' | 'partial' | 'failed';
   errorMessage?: string;
 }
 
 export interface ConversationContext {
   messages: ConversationMessage[];
   edits: ConversationEdit[];
-  currentTopic?: string; // Current focus area (e.g., &quot;header styling&quot;, &quot;hero section&quot;)
+  currentTopic?: string; // Current focus area (e.g., "header styling", "hero section")
   projectEvolution: {
     initialState?: string; // Description of initial project state
-    majorChanges: Array&amp;lt;{
+    majorChanges: Array<{
       timestamp: number;
       description: string;
       filesAffected: string[];
-    }&amp;gt;;
+    }>;
   };
   userPreferences: {
-    editStyle?: &apos;targeted&apos; | &apos;comprehensive&apos;; // How the user prefers edits
+    editStyle?: 'targeted' | 'comprehensive'; // How the user prefers edits
     commonRequests?: string[]; // Common patterns in user requests
     packagePreferences?: string[]; // Commonly used packages
   };

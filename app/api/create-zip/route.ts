@@ -1,7 +1,7 @@
-export const dynamic = &quot;force-static&quot;;
+export const dynamic = "force-static";
 
 
-import { NextRequest, NextResponse } from &apos;next/server&apos;;
+import { NextRequest, NextResponse } from 'next/server';
 
 declare global {
   var activeSandbox: any;
@@ -12,11 +12,11 @@ export async function POST(request: NextRequest) {
     if (!global.activeSandbox) {
       return NextResponse.json({ 
         success: false, 
-        error: &apos;No active sandbox&apos; 
+        error: 'No active sandbox' 
       }, { status: 400 });
     }
     
-    console.log(&apos;[create-zip] Creating project zip...&apos;);
+    console.log('[create-zip] Creating project zip...');
     
     // Create zip file in sandbox
     const result = await global.activeSandbox.runCode(`
@@ -24,35 +24,35 @@ import zipfile
 import os
 import json
 
-os.chdir(&apos;/home/user/app&apos;)
+os.chdir('/home/user/app')
 
 # Create zip file
-with zipfile.ZipFile(&apos;/tmp/project.zip&apos;, &apos;w&apos;, zipfile.ZIP_DEFLATED) as zipf:
-    for root, dirs, files in os.walk(&apos;.&apos;):
+with zipfile.ZipFile('/tmp/project.zip', 'w', zipfile.ZIP_DEFLATED) as zipf:
+    for root, dirs, files in os.walk('.'):
         # Skip node_modules and .git
-        dirs[:] = [d for d in dirs if d not in [&apos;node_modules&apos;, &apos;.git&apos;, &apos;.next&apos;, &apos;dist&apos;]]
+        dirs[:] = [d for d in dirs if d not in ['node_modules', '.git', '.next', 'dist']]
         
         for file in files:
             file_path = os.path.join(root, file)
-            arcname = os.path.relpath(file_path, &apos;.&apos;)
+            arcname = os.path.relpath(file_path, '.')
             zipf.write(file_path, arcname)
 
 # Get file size
-file_size = os.path.getsize(&apos;/tmp/project.zip&apos;)
-print(f&quot; Created project.zip ({file_size} bytes)&quot;)
+file_size = os.path.getsize('/tmp/project.zip')
+print(f" Created project.zip ({file_size} bytes)")
     `);
     
     // Read the zip file and convert to base64
     const readResult = await global.activeSandbox.runCode(`
 import base64
 
-with open(&apos;/tmp/project.zip&apos;, &apos;rb&apos;) as f:
+with open('/tmp/project.zip', 'rb') as f:
     content = f.read()
-    encoded = base64.b64encode(content).decode(&apos;utf-8&apos;)
+    encoded = base64.b64encode(content).decode('utf-8')
     print(encoded)
     `);
     
-    const base64Content = readResult.logs.stdout.join(&apos;&apos;).trim();
+    const base64Content = readResult.logs.stdout.join('').trim();
     
     // Create a data URL for download
     const dataUrl = `data:application/zip;base64,${base64Content}`;
@@ -60,12 +60,12 @@ with open(&apos;/tmp/project.zip&apos;, &apos;rb&apos;) as f:
     return NextResponse.json({
       success: true,
       dataUrl,
-      fileName: &apos;e2b-project.zip&apos;,
-      message: &apos;Zip file created successfully&apos;
+      fileName: 'e2b-project.zip',
+      message: 'Zip file created successfully'
     });
     
   } catch (error) {
-    console.error(&apos;[create-zip] Error:&apos;, error);
+    console.error('[create-zip] Error:', error);
     return NextResponse.json({ 
       success: false, 
       error: (error as Error).message 

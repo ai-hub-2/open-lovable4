@@ -11,7 +11,7 @@ export interface SearchResult {
   matchedPattern?: string;
   contextBefore: string[];
   contextAfter: string[];
-  confidence: &apos;high&apos; | &apos;medium&apos; | &apos;low&apos;;
+  confidence: 'high' | 'medium' | 'low';
 }
 
 export interface SearchPlan {
@@ -41,7 +41,7 @@ export interface SearchExecutionResult {
  */
 export function executeSearchPlan(
   searchPlan: SearchPlan,
-  files: Record&amp;lt;string, string&amp;gt;
+  files: Record<string, string>
 ): SearchExecutionResult {
   const startTime = Date.now();
   const results: SearchResult[] = [];
@@ -51,23 +51,23 @@ export function executeSearchPlan(
   const { 
     searchTerms = [], 
     regexPatterns = [], 
-    fileTypesToSearch = [&apos;.jsx&apos;, &apos;.tsx&apos;, &apos;.js&apos;, &apos;.ts&apos;],
+    fileTypesToSearch = ['.jsx', '.tsx', '.js', '.ts'],
     fallbackSearch 
   } = searchPlan;
 
   // Helper function to perform search
-  const performSearch = (terms: string[], patterns?: string[]): SearchResult[] =&amp;gt; {
+  const performSearch = (terms: string[], patterns?: string[]): SearchResult[] => {
     const searchResults: SearchResult[] = [];
 
     for (const [filePath, content] of Object.entries(files)) {
-      // Skip files that don&apos;t match the desired extensions
-      const shouldSearch = fileTypesToSearch.some(ext =&amp;gt; filePath.endsWith(ext));
+      // Skip files that don't match the desired extensions
+      const shouldSearch = fileTypesToSearch.some(ext => filePath.endsWith(ext));
       if (!shouldSearch) continue;
 
       filesSearched++;
-      const lines = content.split(&apos;\n&apos;);
+      const lines = content.split('\n');
 
-      for (let i = 0; i &amp;lt; lines.length; i++) {
+      for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         let matched = false;
         let matchedTerm: string | undefined;
@@ -83,10 +83,10 @@ export function executeSearchPlan(
         }
 
         // Check regex patterns if no term match
-        if (!matched &amp;&amp; patterns) {
+        if (!matched && patterns) {
           for (const pattern of patterns) {
             try {
-              const regex = new RegExp(pattern, &apos;i&apos;);
+              const regex = new RegExp(pattern, 'i');
               if (regex.test(line)) {
                 matched = true;
                 matchedPattern = pattern;
@@ -104,15 +104,15 @@ export function executeSearchPlan(
           const contextAfter = lines.slice(i + 1, Math.min(lines.length, i + 4));
 
           // Determine confidence based on match type and context
-          let confidence: &apos;high&apos; | &apos;medium&apos; | &apos;low&apos; = &apos;medium&apos;;
+          let confidence: 'high' | 'medium' | 'low' = 'medium';
           
-          // High confidence if it&apos;s an exact match or in a component definition
-          if (matchedTerm &amp;&amp; line.includes(matchedTerm)) {
-            confidence = &apos;high&apos;;
-          } else if (line.includes(&apos;function&apos;) || line.includes(&apos;export&apos;) || line.includes(&apos;return&apos;)) {
-            confidence = &apos;high&apos;;
+          // High confidence if it's an exact match or in a component definition
+          if (matchedTerm && line.includes(matchedTerm)) {
+            confidence = 'high';
+          } else if (line.includes('function') || line.includes('export') || line.includes('return')) {
+            confidence = 'high';
           } else if (matchedPattern) {
-            confidence = &apos;medium&apos;;
+            confidence = 'medium';
           }
 
           searchResults.push({
@@ -136,8 +136,8 @@ export function executeSearchPlan(
   results.push(...performSearch(searchTerms, regexPatterns));
 
   // If no results and we have a fallback, try it
-  if (results.length === 0 &amp;&amp; fallbackSearch) {
-    console.log(&apos;[file-search] No results from primary search, trying fallback...&apos;);
+  if (results.length === 0 && fallbackSearch) {
+    console.log('[file-search] No results from primary search, trying fallback...');
     usedFallback = true;
     results.push(...performSearch(
       fallbackSearch.terms,
@@ -148,18 +148,18 @@ export function executeSearchPlan(
   const executionTime = Date.now() - startTime;
 
   // Sort results by confidence
-  results.sort((a, b) =&amp;gt; {
+  results.sort((a, b) => {
     const confidenceOrder = { high: 3, medium: 2, low: 1 };
     return confidenceOrder[b.confidence] - confidenceOrder[a.confidence];
   });
 
   return {
-    success: results.length &amp;gt; 0,
+    success: results.length > 0,
     results,
     filesSearched,
     executionTime,
     usedFallback,
-    error: results.length === 0 ? &apos;No matches found for search terms&apos; : undefined
+    error: results.length === 0 ? 'No matches found for search terms' : undefined
   };
 }
 
@@ -168,15 +168,15 @@ export function executeSearchPlan(
  */
 export function formatSearchResultsForAI(results: SearchResult[]): string {
   if (results.length === 0) {
-    return &apos;No search results found.&apos;;
+    return 'No search results found.';
   }
 
   const sections: string[] = [];
   
-  sections.push(&apos;🔍 SEARCH RESULTS - EXACT LOCATIONS FOUND:\n&apos;);
+  sections.push('🔍 SEARCH RESULTS - EXACT LOCATIONS FOUND:\n');
   
   // Group by file for better readability
-  const resultsByFile = new Map&amp;lt;string, SearchResult[]&amp;gt;();
+  const resultsByFile = new Map<string, SearchResult[]>();
   for (const result of results) {
     if (!resultsByFile.has(result.filePath)) {
       resultsByFile.set(result.filePath, []);
@@ -191,14 +191,14 @@ export function formatSearchResultsForAI(results: SearchResult[]): string {
       sections.push(`\n  📍 Line ${result.lineNumber} (${result.confidence} confidence)`);
       
       if (result.matchedTerm) {
-        sections.push(`     Matched: &quot;${result.matchedTerm}&quot;`);
+        sections.push(`     Matched: "${result.matchedTerm}"`);
       } else if (result.matchedPattern) {
         sections.push(`     Pattern: ${result.matchedPattern}`);
       }
       
       sections.push(`     Code: ${result.lineContent}`);
       
-      if (result.contextBefore.length &amp;gt; 0 || result.contextAfter.length &amp;gt; 0) {
+      if (result.contextBefore.length > 0 || result.contextAfter.length > 0) {
         sections.push(`     Context:`);
         for (const line of result.contextBefore) {
           sections.push(`       ${line}`);
@@ -211,13 +211,13 @@ export function formatSearchResultsForAI(results: SearchResult[]): string {
     }
   }
 
-  sections.push(&apos;\n\n🎯 RECOMMENDED ACTION:&apos;);
+  sections.push('\n\n🎯 RECOMMENDED ACTION:');
   
   // Recommend the highest confidence result
   const bestResult = results[0];
   sections.push(`Edit ${bestResult.filePath} at line ${bestResult.lineNumber}`);
 
-  return sections.join(&apos;\n&apos;);
+  return sections.join('\n');
 }
 
 /**
@@ -230,30 +230,30 @@ export function selectTargetFile(
   if (results.length === 0) return null;
 
   // For style updates, prefer components over CSS files
-  if (editType === &apos;UPDATE_STYLE&apos;) {
-    const componentResult = results.find(r =&amp;gt; 
-      r.filePath.endsWith(&apos;.jsx&apos;) || r.filePath.endsWith(&apos;.tsx&apos;)
+  if (editType === 'UPDATE_STYLE') {
+    const componentResult = results.find(r => 
+      r.filePath.endsWith('.jsx') || r.filePath.endsWith('.tsx')
     );
     if (componentResult) {
       return {
         filePath: componentResult.filePath,
         lineNumber: componentResult.lineNumber,
-        reason: &apos;Found component with style to update&apos;
+        reason: 'Found component with style to update'
       };
     }
   }
 
   // For remove operations, find the component that renders the element
-  if (editType === &apos;REMOVE_ELEMENT&apos;) {
-    const renderResult = results.find(r =&amp;gt; 
-      r.lineContent.includes(&apos;return&apos;) || 
-      r.lineContent.includes(&apos;&amp;lt;&apos;)
+  if (editType === 'REMOVE_ELEMENT') {
+    const renderResult = results.find(r => 
+      r.lineContent.includes('return') || 
+      r.lineContent.includes('<')
     );
     if (renderResult) {
       return {
         filePath: renderResult.filePath,
         lineNumber: renderResult.lineNumber,
-        reason: &apos;Found element to remove in render output&apos;
+        reason: 'Found element to remove in render output'
       };
     }
   }

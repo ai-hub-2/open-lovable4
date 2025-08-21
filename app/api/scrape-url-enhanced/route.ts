@@ -1,22 +1,22 @@
-export const dynamic = &quot;force-static&quot;;
+export const dynamic = "force-static";
 
 
-import { NextRequest, NextResponse } from &apos;next/server&apos;;
+import { NextRequest, NextResponse } from 'next/server';
 
 // Function to sanitize smart quotes and other problematic characters
 function sanitizeQuotes(text: string): string {
   return text
     // Replace smart single quotes
-    .replace(/[\u2018\u2019\u201A\u201B]/g, &quot;&apos;&quot;)
+    .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
     // Replace smart double quotes
-    .replace(/[\u201C\u201D\u201E\u201F]/g, &apos;&quot;&apos;)
+    .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
     // Replace other quote-like characters
-    .replace(/[\u00AB\u00BB]/g, &apos;&quot;&apos;) // Guillemets
-    .replace(/[\u2039\u203A]/g, &quot;&apos;&quot;) // Single guillemets
+    .replace(/[\u00AB\u00BB]/g, '"') // Guillemets
+    .replace(/[\u2039\u203A]/g, "'") // Single guillemets
     // Replace other problematic characters
-    .replace(/[\u2013\u2014]/g, &apos;-&apos;) // En dash and em dash
-    .replace(/[\u2026]/g, &apos;...&apos;) // Ellipsis
-    .replace(/[\u00A0]/g, &apos; &apos;); // Non-breaking space
+    .replace(/[\u2013\u2014]/g, '-') // En dash and em dash
+    .replace(/[\u2026]/g, '...') // Ellipsis
+    .replace(/[\u00A0]/g, ' '); // Non-breaking space
 }
 
 export async function POST(request: NextRequest) {
@@ -26,34 +26,34 @@ export async function POST(request: NextRequest) {
     if (!url) {
       return NextResponse.json({
         success: false,
-        error: &apos;URL is required&apos;
+        error: 'URL is required'
       }, { status: 400 });
     }
     
-    console.log(&apos;[scrape-url-enhanced] Scraping with Firecrawl:&apos;, url);
+    console.log('[scrape-url-enhanced] Scraping with Firecrawl:', url);
     
     const FIRECRAWL_API_KEY = process.env.FIRECRAWL_API_KEY;
     if (!FIRECRAWL_API_KEY) {
-      throw new Error(&apos;FIRECRAWL_API_KEY environment variable is not set&apos;);
+      throw new Error('FIRECRAWL_API_KEY environment variable is not set');
     }
     
     // Make request to Firecrawl API with maxAge for 500% faster scraping
-    const firecrawlResponse = await fetch(&apos;https://api.firecrawl.dev/v1/scrape&apos;, {
-      method: &apos;POST&apos;,
+    const firecrawlResponse = await fetch('https://api.firecrawl.dev/v1/scrape', {
+      method: 'POST',
       headers: {
-        &apos;Authorization&apos;: `Bearer ${FIRECRAWL_API_KEY}`,
-        &apos;Content-Type&apos;: &apos;application/json&apos;
+        'Authorization': `Bearer ${FIRECRAWL_API_KEY}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         url,
-        formats: [&apos;markdown&apos;, &apos;html&apos;],
+        formats: ['markdown', 'html'],
         waitFor: 3000,
         timeout: 30000,
         blockAds: true,
         maxAge: 3600000, // Use cached data if less than 1 hour old (500% faster!)
         actions: [
           {
-            type: &apos;wait&apos;,
+            type: 'wait',
             milliseconds: 2000
           }
         ]
@@ -68,17 +68,17 @@ export async function POST(request: NextRequest) {
     const data = await firecrawlResponse.json();
     
     if (!data.success || !data.data) {
-      throw new Error(&apos;Failed to scrape content&apos;);
+      throw new Error('Failed to scrape content');
     }
     
     const { markdown, html, metadata } = data.data;
     
     // Sanitize the markdown content
-    const sanitizedMarkdown = sanitizeQuotes(markdown || &apos;&apos;);
+    const sanitizedMarkdown = sanitizeQuotes(markdown || '');
     
     // Extract structured data from the response
-    const title = metadata?.title || &apos;&apos;;
-    const description = metadata?.description || &apos;&apos;;
+    const title = metadata?.title || '';
+    const description = metadata?.description || '';
     
     // Format content for AI
     const formattedContent = `
@@ -101,17 +101,17 @@ ${sanitizedMarkdown}
         url
       },
       metadata: {
-        scraper: &apos;firecrawl-enhanced&apos;,
+        scraper: 'firecrawl-enhanced',
         timestamp: new Date().toISOString(),
         contentLength: formattedContent.length,
         cached: data.data.cached || false, // Indicates if data came from cache
         ...metadata
       },
-      message: &apos;URL scraped successfully with Firecrawl (with caching for 500% faster performance)&apos;
+      message: 'URL scraped successfully with Firecrawl (with caching for 500% faster performance)'
     });
     
   } catch (error) {
-    console.error(&apos;[scrape-url-enhanced] Error:&apos;, error);
+    console.error('[scrape-url-enhanced] Error:', error);
     return NextResponse.json({
       success: false,
       error: (error as Error).message

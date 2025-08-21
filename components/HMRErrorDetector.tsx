@@ -1,15 +1,15 @@
-import { useEffect, useRef } from &apos;react&apos;;
+import { useEffect, useRef } from 'react';
 
 interface HMRErrorDetectorProps {
-  iframeRef: React.RefObject&amp;lt;HTMLIFrameElement&amp;gt;;
-  onErrorDetected: (errors: Array&amp;lt;{ type: string; message: string; package?: string }&amp;gt;) =&amp;gt; void;
+  iframeRef: React.RefObject<HTMLIFrameElement>;
+  onErrorDetected: (errors: Array<{ type: string; message: string; package?: string }>) => void;
 }
 
 export default function HMRErrorDetector({ iframeRef, onErrorDetected }: HMRErrorDetectorProps) {
-  const checkIntervalRef = useRef&amp;lt;NodeJS.Timeout | null&amp;gt;(null);
+  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() =&amp;gt; {
-    const checkForHMRErrors = () =&amp;gt; {
+  useEffect(() => {
+    const checkForHMRErrors = () => {
       if (!iframeRef.current) return;
 
       try {
@@ -17,30 +17,30 @@ export default function HMRErrorDetector({ iframeRef, onErrorDetected }: HMRErro
         if (!iframeDoc) return;
 
         // Check for Vite error overlay
-        const errorOverlay = iframeDoc.querySelector(&apos;vite-error-overlay&apos;);
+        const errorOverlay = iframeDoc.querySelector('vite-error-overlay');
         if (errorOverlay) {
           // Try to extract error message
-          const messageElement = errorOverlay.shadowRoot?.querySelector(&apos;.message-body&apos;);
+          const messageElement = errorOverlay.shadowRoot?.querySelector('.message-body');
           if (messageElement) {
-            const errorText = messageElement.textContent || &apos;&apos;;
+            const errorText = messageElement.textContent || '';
             
             // Parse import errors
-            const importMatch = errorText.match(/Failed to resolve import &quot;([^&quot;]+)&quot;/);
+            const importMatch = errorText.match(/Failed to resolve import "([^"]+)"/);
             if (importMatch) {
               const packageName = importMatch[1];
-              if (!packageName.startsWith(&apos;.&apos;)) {
+              if (!packageName.startsWith('.')) {
                 // Extract base package name
                 let finalPackage = packageName;
-                if (packageName.startsWith(&apos;@&apos;)) {
-                  const parts = packageName.split(&apos;/&apos;);
-                  finalPackage = parts.length &amp;gt;= 2 ? parts.slice(0, 2).join(&apos;/&apos;) : packageName;
+                if (packageName.startsWith('@')) {
+                  const parts = packageName.split('/');
+                  finalPackage = parts.length >= 2 ? parts.slice(0, 2).join('/') : packageName;
                 } else {
-                  finalPackage = packageName.split(&apos;/&apos;)[0];
+                  finalPackage = packageName.split('/')[0];
                 }
 
                 onErrorDetected([{
-                  type: &apos;npm-missing&apos;,
-                  message: `Failed to resolve import &quot;${packageName}&quot;`,
+                  type: 'npm-missing',
+                  message: `Failed to resolve import "${packageName}"`,
                   package: finalPackage
                 }]);
               }
@@ -56,7 +56,7 @@ export default function HMRErrorDetector({ iframeRef, onErrorDetected }: HMRErro
     checkForHMRErrors();
     checkIntervalRef.current = setInterval(checkForHMRErrors, 2000);
 
-    return () =&amp;gt; {
+    return () => {
       if (checkIntervalRef.current) {
         clearInterval(checkIntervalRef.current);
       }
