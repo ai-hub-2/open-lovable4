@@ -8,6 +8,7 @@ command = "pnpm install --no-frozen-lockfile && pnpm build"
 
 # مجلد الخرج (حسب مشروع Next.js يكون .next)
 pages_build_output_dir = ".next"
+publish = ".next"
 
 # تنظيف الـ cache قبل البناء
 [build.upload]

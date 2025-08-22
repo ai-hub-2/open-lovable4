@@ -15,8 +15,10 @@
     "check": "node check-unescaped.js",
     "clean": "rm -rf .next out .vercel",
     "clean:cache": "node clean-cache.js",
+    "clean:all": "node clean-all-cache.js",
     "build:clean": "npm run clean:cache && npm run build",
     "build:optimized": "npm run clean:cache && npm run build",
+    "build:cloudflare": "npm run clean:all && npm run build",
     "build:clean": "npm run clean && npm run build"
   },
   "dependencies": {
